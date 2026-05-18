@@ -1,0 +1,110 @@
+/* Tablet & Responsive Optimization */
+@media (max-width: 1024px) {
+  html {
+    font-size: 18px;
+  }
+
+  button {
+    padding: 16px 28px;
+    font-size: 1.1rem;
+    min-height: 50px;
+  }
+
+  input, select, textarea {
+    padding: 16px 20px;
+    font-size: 1.1rem;
+    min-height: 50px;
+  }
+
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+}
+
+@media (max-width: 768px) {
+  .glass-panel {
+    padding: 20px;
+  }
+
+  .app-container header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  table th, table td {
+    padding: 12px 8px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th {
+  background-color: var(--color-primary-light);
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  padding: 16px 12px;
+}
+
+table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+table tr:hover {
+  background-color: rgba(42, 90, 59, 0.05);
+}
+
+/* Canvas style for signature */
+canvas {
+  display: block;
+  border-radius: 8px;
+  background-color: white;
+  cursor: crosshair;
+}
+
+/* Status badges */
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.badge-success {
+  background-color: #C6F6D5;
+  color: #276749;
+}
+
+.badge-warning {
+  background-color: #FEEBC8;
+  color: #C05621;
+}
+
+/* Smooth transitions */
+button, input, select {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Print styles for PDF */
+@media print {
+  header, .btn-primary, .btn-secondary {
+    display: none;
+  }
+
+  body {
+    background: white;
+  }
+
+  .glass-panel {
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: none;
+  }
+}
