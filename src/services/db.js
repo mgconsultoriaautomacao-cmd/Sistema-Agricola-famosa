@@ -440,23 +440,24 @@ const initialData = {
       ]
     },
     {
-      id: 'KURIZET',
-      title: 'CONTROLE DE MONITORAMENTO KURIZET',
-      version: 'V01 - 2024',
-      type: 'grid-inspection',
-      sectors: ['Packing House', 'Geral'],
-      frequency: 'QUINZENAL',
-      description: 'Monitoramento sistemático de pontos de controle Kurizet para segurança alimentar.',
+      id: 'F299.50',
+      title: 'F299.50 - MONITORAMENTO DE CLORO (KURIZET A-415P)',
+      version: 'V01 - 15.09.2021',
+      type: 'table-log',
+      sectors: ['Packing House'],
+      frequency: 'DIÁRIO',
       columns: [
-        { key: 'ok', label: 'Conforme', type: 'boolean' },
-        { key: 'action', label: 'Ação Necessária', type: 'boolean' },
-        { key: 'replaced', label: 'Trocada', type: 'boolean' },
-        { key: 'note', label: 'Observação', type: 'text' }
-      ],
-      items: Array.from({ length: 40 }, (_, i) => ({
-        id: `K.${String(i+1).padStart(2,'0')}`,
-        label: `Ponto Kurizet ${i+1}`
-      }))
+        { key: 'date', label: 'Dia', type: 'date', defaultValue: 'today' },
+        { key: 'time', label: 'Hora', type: 'time' },
+        { key: 'd1_qty', label: 'D1: Pastilhas Geral (UN)', type: 'number' },
+        { key: 'd1_flow', label: 'D1: Vazão Dissol. (LPH)', type: 'number' },
+        { key: 'd1_chlorine', label: 'D1: Cloro Livre Geral (ppm)', type: 'text' },
+        { key: 'd2_qty', label: 'D2: Pastilhas Enxágue (UN)', type: 'number' },
+        { key: 'd2_flow', label: 'D2: Vazão Dissol. (LPH)', type: 'number' },
+        { key: 'd2_chlorine', label: 'D2: Cloro Livre Enxágue (ppm)', type: 'text' },
+        { key: 'product_lot', label: 'Lote do Produto (Kurizet)', type: 'text' },
+        { key: 'responsible', label: 'Nome / Responsável', type: 'text' }
+      ]
     },
     {
       id: 'F155',
