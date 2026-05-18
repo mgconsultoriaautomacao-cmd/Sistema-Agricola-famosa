@@ -16,40 +16,51 @@ const getUserName = (userId) => {
 const drawHeader = (doc, session) => {
     const { form } = session;
     
-    // External Border
+    // Header outer border - expanded height to 100 to fit audit stamps
     doc.setDrawColor(0);
     doc.setLineWidth(1.5);
-    doc.rect(30, 30, 535, 80);
+    doc.rect(30, 30, 535, 100);
     
-    // Internal Dividers
+    // Internal Dividers - expanded to 130 to match height
     doc.setLineWidth(0.5);
-    doc.line(180, 30, 180, 110); // Logo divider
-    doc.line(400, 30, 400, 110); // Info divider
+    doc.line(180, 30, 180, 130); // Logo divider
+    doc.line(400, 30, 400, 130); // Info divider
     
     // Institutional Branding
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('AGRÍCOLA FAMOSA S.A.', 40, 65);
+    doc.text('AGRÍCOLA FAMOSA S.A.', 40, 70);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
-    doc.text('PRODTECH 4.0 - QUALIDADE', 40, 85);
+    doc.text('PRODTECH 4.0 - QUALIDADE', 40, 90);
     
     // Form Title (Center)
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     const titleLines = doc.splitTextToSize(form.title.toUpperCase(), 200);
-    doc.text(titleLines, 195, 65, { align: 'left' });
+    doc.text(titleLines, 195, 70, { align: 'left' });
     
     // Metadata (Right)
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     const rightX = 410;
-    doc.text('CONTROLE DE QUALIDADE', rightX, 45);
+    doc.text('CONTROLE DE QUALIDADE', rightX, 42);
     doc.setFont('helvetica', 'normal');
-    doc.text(`CÓDIGO: AF-QA-${form.id}`, rightX, 60);
-    doc.text(`VERSÃO: ${form.version || '01'} (2024)`, rightX, 72);
-    doc.text(`FAZENDA: ${session.farmName}`, rightX, 84);
-    doc.text(`DATA: ${format(new Date(session.date), 'dd/MM/yyyy')}`, rightX, 96);
+    doc.text(`CÓDIGO: AF-QA-${form.id}`, rightX, 54);
+    doc.text(`VERSÃO: ${form.version || '01'} (2024)`, rightX, 66);
+    doc.text(`FAZENDA: ${session.farmName}`, rightX, 78);
+    doc.text(`DATA: ${format(new Date(session.date), 'dd/MM/yyyy')}`, rightX, 90);
+    
+    // Audit Validation and Certification Stamps
+    const validationLabels = { pending: 'PENDENTE', validated: 'VALIDADO', rejected: 'REJEITADO' };
+    const validationStatus = session.validationStatus || 'pending';
+    doc.setFont('helvetica', 'bold');
+    doc.text(`VALIDAÇÃO: ${validationLabels[validationStatus] || 'PENDENTE'}`, rightX, 102);
+    
+    const certificationLabels = { waiting: 'AGUARDANDO', in_review: 'EM REVISÃO', certified: 'CERTIFICADO' };
+    const certificationStatus = session.certificationStatus || 'waiting';
+    doc.text(`CERTIFICAÇÃO: ${certificationLabels[certificationStatus] || 'AGUARDANDO'}`, rightX, 114);
+    doc.setFont('helvetica', 'normal');
 };
 
 export const generateSessionPDF = (session) => {
@@ -61,7 +72,7 @@ export const generateSessionPDF = (session) => {
 
         if (form.type === 'checklist') {
             const lastRecord = records[records.length - 1];
-            let currentY = 130;
+            let currentY = 150;
             
             form.sections.forEach(section => {
                 const tableRows = section.items.map((item, idx) => {
@@ -91,7 +102,7 @@ export const generateSessionPDF = (session) => {
                 if (currentY > 750) {
                     doc.addPage();
                     drawHeader(doc, session);
-                    currentY = 130;
+                    currentY = 150;
                 }
             });
         } 
@@ -120,7 +131,7 @@ export const generateSessionPDF = (session) => {
             });
 
             autoTable(doc, {
-                startY: 130,
+                startY: 150,
                 body: tableRows,
                 theme: 'grid',
                 styles: { fontSize: 8, cellPadding: 5 },
@@ -137,7 +148,7 @@ export const generateSessionPDF = (session) => {
                 if (currentY > 500) {
                     doc.addPage();
                     drawHeader(doc, session);
-                    currentY = 130;
+                    currentY = 150;
                 }
 
                 doc.setFontSize(10);
@@ -153,7 +164,7 @@ export const generateSessionPDF = (session) => {
                         if (currentY > 750) {
                             doc.addPage();
                             drawHeader(doc, session);
-                            currentY = 130;
+                            currentY = 150;
                         }
                     }
 
@@ -189,7 +200,7 @@ export const generateSessionPDF = (session) => {
             });
 
             autoTable(doc, {
-                startY: 130,
+                startY: 150,
                 head: head,
                 body: body,
                 theme: 'grid',
@@ -212,7 +223,7 @@ export const generateSessionPDF = (session) => {
             });
 
             autoTable(doc, {
-                startY: 130,
+                startY: 150,
                 head: [['Código', 'Descrição do Item', 'Estado']],
                 body: tableRows,
                 theme: 'grid',

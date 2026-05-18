@@ -32,8 +32,6 @@ export const SignatureFinish = () => {
     ctx.lineWidth = 2;
   }, []);
 
-  if (!session) return <div>Sessão não encontrada</div>;
-
   const getCanvasContext = () => {
     const c = canvasRef.current;
     if (!c) return null;
@@ -118,6 +116,8 @@ export const SignatureFinish = () => {
         canvas.removeEventListener('touchend', handleTouchEnd);
     };
   }, [isDrawing]);
+
+  if (!session) return <div className="p-10 text-white animate-pulse">Carregando detalhes da sessão...</div>;
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', padding: '20px' }}>
