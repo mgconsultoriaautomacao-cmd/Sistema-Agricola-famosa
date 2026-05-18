@@ -522,6 +522,9 @@ const initialData = {
         { name: 'variedade', label: 'Variedade / Tipo de Melão/Melancia', type: 'text' },
         { name: 'marca_caixa', label: 'Marca da Caixa', type: 'text' },
         { name: 'porto_destino', label: 'Porto de Destino', type: 'text' },
+        { name: 'placa_veiculo', label: 'Placa do Veículo / Carreta', type: 'text' },
+        { name: 'num_container', label: 'Número do Contêiner', type: 'text' },
+        { name: 'num_lacre', label: 'Número do Lacre', type: 'text' },
         { name: 'sec_term', label: '2 - REGISTROS DE SEGURANÇA E CONFORMIDADE', type: 'section' },
         { name: 'termografo_sensor', label: 'Termógrafo Sensor instalado?', type: 'select', options: ['SIM', 'NÃO'] },
         { name: 'termografo_serial', label: 'Nº de Série do Temp Tale', type: 'text' },
@@ -544,6 +547,7 @@ const initialData = {
         { key: 'date', label: 'Data', type: 'date', defaultValue: 'today' },
         { key: 'time', label: 'Hora', type: 'time' },
         { key: 'variety', label: 'Lote / Variedade', type: 'text' },
+        { key: 'label_code', label: 'Rótulo / Código PLU', type: 'text' },
         { key: 'quantity', label: 'Qtd Saída (Unid)', type: 'number' },
         { key: 'operator', label: 'Operador que Retirou', type: 'text' },
         { key: 'destination', label: 'Destino / Linha de Embalagem', type: 'text' }
@@ -560,6 +564,7 @@ const initialData = {
         { key: 'date', label: 'Data', type: 'date', defaultValue: 'today' },
         { key: 'time', label: 'Hora', type: 'time' },
         { key: 'variety', label: 'Lote / Variedade', type: 'text' },
+        { key: 'label_code', label: 'Rótulo / Código PLU', type: 'text' },
         { key: 'quantity_applied', label: 'Qtd Aplicada (Unid)', type: 'number' },
         { key: 'losses', label: 'Perdas / Refugos', type: 'number' },
         { key: 'responsible', label: 'Responsável', type: 'text' }
@@ -575,6 +580,7 @@ const initialData = {
       columns: [
         { key: 'date', label: 'Data Fechamento', type: 'date', defaultValue: 'today' },
         { key: 'variety', label: 'Lote / Variedade', type: 'text' },
+        { key: 'label_code', label: 'Rótulo / Código PLU', type: 'text' },
         { key: 'stock_initial', label: 'Estoque Inicial', type: 'number' },
         { key: 'returned', label: 'Devolvido ao Estoque', type: 'number' },
         { key: 'balance', label: 'Saldo Final Real', type: 'number' },
@@ -593,6 +599,7 @@ const initialData = {
         { key: 'time', label: 'Hora Medição', type: 'time' },
         { key: 'chamber', label: 'Câmara Fria', type: 'select', options: ['Câmara 01', 'Câmara 02', 'Câmara 03', 'Câmara 04', 'Câmara 05', 'Câmara Pré-Resfriamento'] },
         { key: 'temp', label: 'Temperatura (°C)', type: 'text' },
+        { key: 'humidity', label: 'Umidade Relativa (UR%)', type: 'text' },
         { key: 'status', label: 'Conforme?', type: 'select', options: ['SIM', 'NÃO'] },
         { key: 'responsible', label: 'Responsável', type: 'text' }
       ]
@@ -610,6 +617,7 @@ const initialData = {
         { key: 'tunnel', label: 'Túnel de Resfriamento', type: 'select', options: ['Túnel Rápido A', 'Túnel Rápido B', 'Túnel Rápido C'] },
         { key: 'temp_in', label: 'Temp Entrada Fruto (°C)', type: 'text' },
         { key: 'temp_out', label: 'Temp Saída Fruto (°C)', type: 'text' },
+        { key: 'cycle_time', label: 'Tempo de Resfriamento (min)', type: 'number' },
         { key: 'responsible', label: 'Responsável', type: 'text' }
       ]
     },
@@ -626,6 +634,8 @@ const initialData = {
         { key: 'tool_code', label: 'Código da Ferramenta / Nº Faca', type: 'text' },
         { key: 'employee', label: 'Colaborador Associado', type: 'text' },
         { key: 'status', label: 'Estado Geral', type: 'select', options: ['CONFORME (AFIADA/INTEGRA)', 'NÃO CONFORME (DANIFICADA/AMASSADA)', 'QUEBRADA / RETIRADA'] },
+        { key: 'chain_ok', label: 'Corrente/Cabo Íntegro?', type: 'select', options: ['SIM', 'NÃO'] },
+        { key: 'corr_action', label: 'Ação Corretiva se Irregular', type: 'text' },
         { key: 'responsible', label: 'Responsável Insp.', type: 'text' }
       ]
     }
