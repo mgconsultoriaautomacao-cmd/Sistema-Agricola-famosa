@@ -77,9 +77,32 @@ export const AdminLogin = () => {
                     <button type="submit" className="btn-primary" style={{ width: '100%', padding: '16px' }}>
                         Entrar no Painel de Controle
                     </button>
+
+                    <div style={{ marginTop: '20px' }}>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/')}
+                            className="btn-secondary"
+                            style={{
+                                width: '100%',
+                                padding: '12px',
+                                fontSize: '0.85rem',
+                                fontWeight: 700,
+                                background: 'transparent',
+                                color: 'var(--color-primary)',
+                                border: '1px dashed var(--color-primary)',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            📱 Ir para Módulo de Campo (Tablet)
+                        </button>
+                    </div>
                     
                     <div style={{ 
-                        marginTop: '32px', 
+                        marginTop: '24px', 
                         padding: '16px', 
                         backgroundColor: 'rgba(0,0,0,0.02)', 
                         borderRadius: '12px',
@@ -98,3 +121,4 @@ export const AdminLogin = () => {
         </div>
     );
 };
+

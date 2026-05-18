@@ -23,19 +23,20 @@ export const Layout = ({ adminMode = false }) => {
   };
 
   const isAdminLoggedIn = adminMode && user && location.pathname !== '/admin/login';
+  const isTabletMode = !adminMode;
 
   return (
     <div className="app-container">
-      <header className="glass-panel" style={{ borderRadius: 0, padding: '12px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', zIndex: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <img src={logo} alt="Logo" style={{ height: '40px', objectFit: 'contain' }} />
-          <h2 style={{ color: 'var(--color-primary-dark)', margin: 0, fontSize: '1.25rem', fontWeight: 600 }}>
+      <header className="glass-panel app-header">
+        <div className="header-left">
+          <img src={logo} alt="Logo" className="header-logo" />
+          <h2 className="header-title">
             {adminMode ? 'HQ Admin Dashboard' : 'Tablet Operacional'}
           </h2>
         </div>
         
         {user && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div className="header-right">
             <button 
               onClick={toggleTheme} 
               className="btn-secondary" 
@@ -45,7 +46,7 @@ export const Layout = ({ adminMode = false }) => {
               {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
             </button>
 
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+            <div className="user-profile">
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-primary)', fontWeight: 'bold' }}>
                 <User size={16} />
                 <span>{user.name}</span>
@@ -59,25 +60,23 @@ export const Layout = ({ adminMode = false }) => {
               <LogOut size={16} />
               Sair
             </button>
+
+            {/* Quick Link to alternate between tablet/admin for easier access */}
+            <button 
+              onClick={() => navigate(adminMode ? '/' : '/admin/login')} 
+              className="btn-secondary" 
+              style={{ padding: '8px 12px', fontSize: '0.75rem', fontWeight: 700, borderColor: 'var(--color-accent)', color: 'var(--color-accent)' }}
+              title={adminMode ? "Módulo de Campo" : "HQ Administrativo"}
+            >
+              {adminMode ? "📱 PWA Campo" : "🔒 HQ Admin"}
+            </button>
           </div>
         )}
       </header>
 
       {/* Premium Sub Navigation Bar for Admin HQ */}
       {isAdminLoggedIn && (
-        <nav className="glass-panel" style={{ 
-          borderRadius: 0, 
-          borderTop: 'none', 
-          borderLeft: 'none',
-          borderRight: 'none',
-          borderBottom: '1px solid var(--glass-border)',
-          padding: '6px 24px', 
-          display: 'flex', 
-          gap: '12px', 
-          backgroundColor: 'var(--glass-bg)',
-          backdropFilter: 'blur(12px)',
-          zIndex: 9
-        }}>
+        <nav className="glass-panel admin-nav">
           <NavButton 
             active={location.pathname.startsWith('/admin/dashboard')} 
             onClick={() => navigate('/admin/dashboard')}

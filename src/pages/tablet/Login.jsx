@@ -57,16 +57,7 @@ export const TabletLogin = () => {
     };
 
     return (
-        <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            minHeight: '100vh', 
-            padding: '24px', 
-            backgroundColor: '#020617',
-            position: 'relative',
-            overflow: 'hidden'
-        }}>
+        <div className="login-container">
             {/* Abstract Background Orbs */}
             <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40%', height: '40%', background: 'rgba(5, 150, 105, 0.1)', filter: 'blur(120px)', borderRadius: '50%' }} />
             <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '40%', height: '40%', background: 'rgba(251, 191, 36, 0.1)', filter: 'blur(120px)', borderRadius: '50%' }} />
@@ -74,33 +65,25 @@ export const TabletLogin = () => {
             <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }} 
                 animate={{ opacity: 1, scale: 1 }} 
-                className="glass-panel" 
-                style={{ 
-                    padding: '64px 48px', 
-                    maxWidth: '520px', 
-                    width: '100%', 
-                    textAlign: 'center',
-                    background: 'rgba(15, 23, 42, 0.8)',
-                    zIndex: 10
-                }}
+                className="glass-panel glass-panel-login" 
             >
-                <div style={{ marginBottom: '48px' }}>
+                <div style={{ marginBottom: '40px' }}>
                     <motion.img 
                         initial={{ y: -20 }}
                         animate={{ y: 0 }}
                         src={logo} 
                         alt="Agrícola Famosa" 
-                        style={{ height: '80px', objectFit: 'contain', margin: '0 auto 24px' }} 
+                        style={{ height: '70px', objectFit: 'contain', margin: '0 auto 20px' }} 
                     />
-                    <h1 className="agro-gradient-text" style={{ fontSize: '2.5rem', marginBottom: '4px' }}>PRODTECH</h1>
+                    <h1 className="agro-gradient-text" style={{ fontSize: '2.25rem', marginBottom: '4px' }}>PRODTECH</h1>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.3em' }}>
                         <Lock size={14} /> Módulo de Campo
                     </div>
                 </div>
 
                 <form onSubmit={handleLogin}>
-                    <div style={{ marginBottom: '48px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '24px' }}>
+                    <div style={{ marginBottom: '32px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginBottom: '20px' }}>
                             {[0, 1, 2, 3].map(i => (
                                 <motion.div 
                                     key={i}
@@ -109,8 +92,8 @@ export const TabletLogin = () => {
                                         backgroundColor: pin.length > i ? 'var(--color-primary)' : 'rgba(255,255,255,0.1)'
                                     }}
                                     style={{ 
-                                        width: '20px', 
-                                        height: '20px', 
+                                        width: '18px', 
+                                        height: '18px', 
                                         borderRadius: '50%', 
                                         border: '2px solid rgba(255,255,255,0.2)',
                                         boxShadow: pin.length > i ? '0 0 15px var(--color-primary)' : 'none'
@@ -133,24 +116,15 @@ export const TabletLogin = () => {
                         </AnimatePresence>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '32px' }}>
+                    <div className="pin-grid">
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
                             <motion.button 
                                 key={num} 
                                 type="button"
-                                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.1)' }}
+                                whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="btn-secondary" 
+                                className="pin-btn" 
                                 onClick={() => handlePinInput(num.toString())}
-                                style={{ 
-                                    padding: '32px', 
-                                    fontSize: '2rem', 
-                                    fontWeight: 800, 
-                                    borderRadius: '24px', 
-                                    background: 'rgba(255,255,255,0.05)',
-                                    color: 'white',
-                                    border: '1px solid rgba(255,255,255,0.1)'
-                                }}
                             >
                                 {num}
                             </motion.button>
@@ -158,25 +132,17 @@ export const TabletLogin = () => {
                         <motion.button 
                             type="button" 
                             whileTap={{ scale: 0.95 }}
-                            className="btn-secondary" 
+                            className="pin-btn" 
                             onClick={handleBackspace} 
-                            style={{ padding: '32px', borderRadius: '24px', background: 'rgba(255,255,255,0.05)', color: 'white' }}
+                            style={{ background: 'rgba(239, 68, 68, 0.15) !important', border: '1px solid rgba(239, 68, 68, 0.3) !important' }}
                         >
-                            <Delete size={32} />
+                            <Delete size={28} />
                         </motion.button>
                         <motion.button 
                             type="button" 
                             whileTap={{ scale: 0.95 }}
-                            className="btn-secondary" 
+                            className="pin-btn" 
                             onClick={() => handlePinInput('0')} 
-                            style={{ 
-                                padding: '32px', 
-                                fontSize: '2rem', 
-                                fontWeight: 800, 
-                                borderRadius: '24px', 
-                                background: 'rgba(255,255,255,0.05)',
-                                color: 'white'
-                            }}
                         >
                             0
                         </motion.button>
@@ -184,19 +150,43 @@ export const TabletLogin = () => {
                             type="submit" 
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="btn-primary" 
+                            className="pin-btn"
                             disabled={pin.length !== 4 || isLoading} 
-                            style={{ padding: '32px', borderRadius: '24px' }}
+                            style={{ background: 'var(--agro-gradient) !important', boxShadow: '0 8px 24px rgba(5, 150, 105, 0.3) !important' }}
                         >
                             {isLoading ? (
-                                <Activity className="animate-spin" size={32} />
+                                <Activity className="animate-spin" size={28} />
                             ) : (
-                                <CheckCircle2 size={32} />
+                                <CheckCircle2 size={28} />
                             )}
                         </motion.button>
                     </div>
 
-                    <div style={{ marginTop: '24px', color: 'rgba(255,255,255,0.2)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    {/* Highly requested HQ Access button */}
+                    <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/admin/login')}
+                            className="btn-secondary"
+                            style={{
+                                width: '100%',
+                                padding: '12px',
+                                fontSize: '0.85rem',
+                                fontWeight: 700,
+                                background: 'transparent',
+                                color: 'var(--color-primary-light)',
+                                border: '1px dashed var(--color-primary)',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            <Shield size={16} /> Acesso HQ Administrativo
+                        </button>
+                    </div>
+
+                    <div style={{ marginTop: '20px', color: 'rgba(255,255,255,0.2)', fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                         ProdTech 4.0 • Agrícola Famosa HQ
                     </div>
                 </form>
@@ -204,3 +194,4 @@ export const TabletLogin = () => {
         </div>
     );
 };
+
