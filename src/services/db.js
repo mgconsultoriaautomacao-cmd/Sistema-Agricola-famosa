@@ -28,6 +28,29 @@ const initialData = {
     { id: 'PH', name: 'PH', sectors: ['Packing House', 'Higiene', 'Campo'] },
     { id: 'KM60', name: 'KM 60', sectors: ['Packing House', 'Higiene', 'Campo'] }
   ],
+  labels: [
+    {
+      id: 'L1',
+      name: 'Melancia Tesco Export (HD)',
+      variety: 'Melancia Sem Semente',
+      barcode: '1002 1392',
+      image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" fill="%23f8fafc" rx="8" stroke="%23cbd5e1" stroke-width="2"/><ellipse cx="60" cy="50" rx="35" ry="25" fill="%2315803d"/><ellipse cx="60" cy="50" rx="30" ry="20" fill="%2322c55e"/><ellipse cx="60" cy="50" rx="25" ry="15" fill="%23ef4444"/><circle cx="50" cy="45" r="2" fill="%23000"/><circle cx="65" cy="48" r="2" fill="%23000"/><circle cx="70" cy="42" r="2" fill="%23000"/><circle cx="55" cy="52" r="2" fill="%23000"/><text x="60" y="95" font-family="sans-serif" font-size="10" font-weight="bold" fill="%231e293b" text-anchor="middle">WATERMELON BR</text><text x="60" y="110" font-family="monospace" font-size="8" fill="%2364748b" text-anchor="middle">PLU 1002 1392</text></svg>'
+    },
+    {
+      id: 'L2',
+      name: 'Melão Amarelo Famosa Premium',
+      variety: 'Melão Amarelo',
+      barcode: '1002 1380',
+      image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" fill="%23f8fafc" rx="8" stroke="%23cbd5e1" stroke-width="2"/><circle cx="60" cy="50" r="28" fill="%23eab308" stroke="%23ca8a04" stroke-width="2"/><text x="60" y="95" font-family="sans-serif" font-size="10" font-weight="bold" fill="%231e293b" text-anchor="middle">YELLOW MELON</text><text x="60" y="110" font-family="monospace" font-size="8" fill="%2364748b" text-anchor="middle">PLU 1002 1380</text></svg>'
+    },
+    {
+      id: 'L3',
+      name: 'Melão Cantaloupe Famosa Gold',
+      variety: 'Melão Cantaloupe',
+      barcode: '1002 1375',
+      image: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" fill="%23f8fafc" rx="8" stroke="%23cbd5e1" stroke-width="2"/><circle cx="60" cy="50" r="28" fill="%23f97316" stroke="%23ea580c" stroke-width="2"/><text x="60" y="95" font-family="sans-serif" font-size="10" font-weight="bold" fill="%231e293b" text-anchor="middle">CANTALOUPE</text><text x="60" y="110" font-family="monospace" font-size="8" fill="%2364748b" text-anchor="middle">PLU 1002 1375</text></svg>'
+    }
+  ],
   forms: [
     {
       id: 'CL02',
@@ -483,6 +506,127 @@ const initialData = {
         { key: 'vehicle_hygiene', label: 'Higiene Veículo', type: 'select', options: ['CONFORME', 'NÃO CONFORME'] },
         { key: 'responsible', label: 'Responsável', type: 'text' }
       ]
+    },
+    {
+      id: 'F299.64',
+      title: 'F299.64 - CHECK LIST DE CARREGAMENTO',
+      version: 'V04 - 23.06.2021',
+      type: 'form',
+      sectors: ['Packing House'],
+      frequency: 'A CADA EMBARQUE',
+      haccp: true,
+      fields: [
+        { name: 'sec_emb', label: '1 - INFORMAÇÕES DE EMBARQUE', type: 'section' },
+        { name: 'cliente', label: 'Cliente / Comprador', type: 'text' },
+        { name: 'variedade', label: 'Variedade / Tipo de Melão/Melancia', type: 'text' },
+        { name: 'marca_caixa', label: 'Marca da Caixa', type: 'text' },
+        { name: 'porto_destino', label: 'Porto de Destino', type: 'text' },
+        { name: 'sec_term', label: '2 - REGISTROS DE SEGURANÇA E CONFORMIDADE', type: 'section' },
+        { name: 'termografo_sensor', label: 'Termógrafo Sensor instalado?', type: 'select', options: ['SIM', 'NÃO'] },
+        { name: 'termografo_serial', label: 'Nº de Série do Temp Tale', type: 'text' },
+        { name: 'pallets_chep', label: 'Uso de Pallets CHEP?', type: 'select', options: ['SIM', 'NÃO'] },
+        { name: 'sec_label', label: '3 - COMPROVANTES VISUAIS DE ETIQUETAS', type: 'section' },
+        { name: 'etiqueta_fruto_img', label: 'Amostra da Etiqueta de Fruto', type: 'label-image-selector', category: 'fruto' },
+        { name: 'etiqueta_caixa_img', label: 'Amostra da Etiqueta de Caixa', type: 'label-image-selector', category: 'caixa' },
+        { name: 'sec_obs', label: '4 - OBSERVAÇÕES E NOTAS DE TRACEABILIDADE', type: 'section' },
+        { name: 'observacoes', label: 'Observações / Notas Adicionais (Tesco)', type: 'textarea' }
+      ]
+    },
+    {
+      id: 'F299.62',
+      title: 'F299.62 - CONTROLE DE SAÍDA DE ETIQUETA',
+      version: 'V03 - 25.06.2021',
+      type: 'table-log',
+      sectors: ['Packing House'],
+      frequency: 'DIÁRIO',
+      columns: [
+        { key: 'date', label: 'Data', type: 'date', defaultValue: 'today' },
+        { key: 'time', label: 'Hora', type: 'time' },
+        { key: 'variety', label: 'Lote / Variedade', type: 'text' },
+        { key: 'quantity', label: 'Qtd Saída (Unid)', type: 'number' },
+        { key: 'operator', label: 'Operador que Retirou', type: 'text' },
+        { key: 'destination', label: 'Destino / Linha de Embalagem', type: 'text' }
+      ]
+    },
+    {
+      id: 'F299.63',
+      title: 'F299.63 - CONTROLE DE USO DE ETIQUETA',
+      version: 'V03 - 25.06.2021',
+      type: 'table-log',
+      sectors: ['Packing House'],
+      frequency: 'DIÁRIO',
+      columns: [
+        { key: 'date', label: 'Data', type: 'date', defaultValue: 'today' },
+        { key: 'time', label: 'Hora', type: 'time' },
+        { key: 'variety', label: 'Lote / Variedade', type: 'text' },
+        { key: 'quantity_applied', label: 'Qtd Aplicada (Unid)', type: 'number' },
+        { key: 'losses', label: 'Perdas / Refugos', type: 'number' },
+        { key: 'responsible', label: 'Responsável', type: 'text' }
+      ]
+    },
+    {
+      id: 'F299.10',
+      title: 'F299.10 - ESTOQUE DE SOBRAS DE ETIQUETAS',
+      version: 'V02 - 25.06.2021',
+      type: 'table-log',
+      sectors: ['Packing House'],
+      frequency: 'DIÁRIO / FECHAMENTO',
+      columns: [
+        { key: 'date', label: 'Data Fechamento', type: 'date', defaultValue: 'today' },
+        { key: 'variety', label: 'Lote / Variedade', type: 'text' },
+        { key: 'stock_initial', label: 'Estoque Inicial', type: 'number' },
+        { key: 'returned', label: 'Devolvido ao Estoque', type: 'number' },
+        { key: 'balance', label: 'Saldo Final Real', type: 'number' },
+        { key: 'responsible', label: 'Responsável', type: 'text' }
+      ]
+    },
+    {
+      id: 'F217.TEMP',
+      title: 'F217.TEMP - CONTROLE DE TEMPERATURA DA CÂMARA FRIA',
+      version: 'V12 - 03.11.2022',
+      type: 'table-log',
+      sectors: ['Packing House', 'Geral'],
+      frequency: 'A CADA 4 HORAS',
+      columns: [
+        { key: 'date', label: 'Data', type: 'date', defaultValue: 'today' },
+        { key: 'time', label: 'Hora Medição', type: 'time' },
+        { key: 'chamber', label: 'Câmara Fria', type: 'select', options: ['Câmara 01', 'Câmara 02', 'Câmara 03', 'Câmara 04', 'Câmara 05', 'Câmara Pré-Resfriamento'] },
+        { key: 'temp', label: 'Temperatura (°C)', type: 'text' },
+        { key: 'status', label: 'Conforme?', type: 'select', options: ['SIM', 'NÃO'] },
+        { key: 'responsible', label: 'Responsável', type: 'text' }
+      ]
+    },
+    {
+      id: 'F217.TUNEL',
+      title: 'F217.TUNEL - CONTROLE DE TEMPERATURA DO TÚNEL DE RESFRIAMENTO',
+      version: 'V12 - 03.11.2022',
+      type: 'table-log',
+      sectors: ['Packing House'],
+      frequency: 'A CADA CARGA',
+      columns: [
+        { key: 'date', label: 'Data', type: 'date', defaultValue: 'today' },
+        { key: 'time', label: 'Hora Medição', type: 'time' },
+        { key: 'tunnel', label: 'Túnel de Resfriamento', type: 'select', options: ['Túnel Rápido A', 'Túnel Rápido B', 'Túnel Rápido C'] },
+        { key: 'temp_in', label: 'Temp Entrada Fruto (°C)', type: 'text' },
+        { key: 'temp_out', label: 'Temp Saída Fruto (°C)', type: 'text' },
+        { key: 'responsible', label: 'Responsável', type: 'text' }
+      ]
+    },
+    {
+      id: 'F253.FERRAMENTAS',
+      title: 'F253.FERRAMENTAS - REGISTRO DE FACAS E TESOURAS',
+      version: 'V02 - 25.06.2021',
+      type: 'table-log',
+      sectors: ['Higiene', 'Campo', 'Packing House'],
+      frequency: 'DIÁRIO',
+      columns: [
+        { key: 'date', label: 'Data', type: 'date', defaultValue: 'today' },
+        { key: 'time', label: 'Hora Registro', type: 'time' },
+        { key: 'tool_code', label: 'Código da Ferramenta / Nº Faca', type: 'text' },
+        { key: 'employee', label: 'Colaborador Associado', type: 'text' },
+        { key: 'status', label: 'Estado Geral', type: 'select', options: ['CONFORME (AFIADA/INTEGRA)', 'NÃO CONFORME (DANIFICADA/AMASSADA)', 'QUEBRADA / RETIRADA'] },
+        { key: 'responsible', label: 'Responsável Insp.', type: 'text' }
+      ]
     }
   ],
   sessions: [], // Daily sessions: { id, date, formId, farmId, status (open, signed), createdBy, signature, validationStatus, certificationStatus }
@@ -500,6 +644,9 @@ export const initDB = () => {
     const db = JSON.parse(stored);
     db.forms = initialData.forms;
     db.farms = initialData.farms;
+    if (!db.labels) {
+        db.labels = initialData.labels || [];
+    }
     saveDB(db);
 };
 
@@ -776,4 +923,41 @@ export const updateSessionStatus = async (userId, sessionId, field, status) => {
 export const getAuditLogs = async () => {
     const db = getDB();
     return db.auditLogs.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+};
+
+export const getLabels = async () => {
+    const db = getDB();
+    if (!db.labels) {
+        db.labels = initialData.labels || [];
+        saveDB(db);
+    }
+    return db.labels;
+};
+
+export const addLabel = async (userId, labelData) => {
+    const db = getDB();
+    db.labels = db.labels || [];
+    const newLabel = {
+        id: `L_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        name: labelData.name,
+        variety: labelData.variety,
+        barcode: labelData.barcode,
+        image: labelData.image // Base64 string
+    };
+    db.labels.push(newLabel);
+    await logAction(userId, 'ADD_LABEL', `Cadastrou nova etiqueta: ${labelData.name} (${labelData.barcode})`, db);
+    saveDB(db);
+    return newLabel;
+};
+
+export const deleteLabel = async (userId, labelId) => {
+    const db = getDB();
+    db.labels = db.labels || [];
+    const index = db.labels.findIndex(l => l.id === labelId);
+    if (index === -1) throw new Error("Etiqueta não encontrada");
+    
+    const label = db.labels[index];
+    db.labels.splice(index, 1);
+    await logAction(userId, 'DELETE_LABEL', `Excluiu a etiqueta ${label.name}`, db);
+    saveDB(db);
 };

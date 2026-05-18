@@ -76,9 +76,17 @@ export const DocumentPDFView = () => {
                 ) : (
                   Object.entries(r.data || {}).map(([key, value]) => {
                     if (key === 'checklist' && typeof value === 'object') return null;
+                    const isImage = String(value).startsWith('data:image');
                     return (
-                      <div key={key}>
-                        <strong>{getFieldLabel(key)}:</strong> {String(value)}
+                      <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '2px 0' }}>
+                        <strong>{getFieldLabel(key)}:</strong>{' '}
+                        {isImage ? (
+                          <div style={{ padding: '4px', border: '1px solid #ccc', background: '#fff', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '50px', height: '50px' }}>
+                            <img src={String(value)} alt="Amostra" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                          </div>
+                        ) : (
+                          <span>{String(value)}</span>
+                        )}
                       </div>
                     );
                   })

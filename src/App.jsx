@@ -22,6 +22,7 @@ import { DocumentsTable } from './pages/admin/DocumentsTable';
 import { DocumentView } from './pages/admin/DocumentView';
 import { DocumentPDFView } from './pages/admin/DocumentPDFView';
 import { UserManagement } from './pages/admin/UserManagement';
+import { LabelsDashboard } from './pages/admin/LabelsDashboard';
 
 // Protected Route HOC
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -113,9 +114,14 @@ const App = () => {
                 <DocumentPDFView />
               </ProtectedRoute>
             } />
-            <Route path="users" element={
+             <Route path="users" element={
               <ProtectedRoute allowedRoles={['admin', 'supervisor', 'sede']}>
                 <UserManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="labels" element={
+              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede']}>
+                <LabelsDashboard />
               </ProtectedRoute>
             } />
             <Route path="session/:sessionId" element={

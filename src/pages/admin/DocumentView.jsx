@@ -121,9 +121,17 @@ export const DocumentView = () => {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                         {Object.entries(r.data || {}).map(([k, v]) => {
                           if (k === 'checklist' && typeof v === 'object') return null; // Don't list raw checklist objects
+                          const isImage = String(v).startsWith('data:image');
                           return (
-                            <div key={k}>
-                              <strong>{getFieldLabel(k)}:</strong> <span style={{ fontWeight: 600 }}>{String(v)}</span>
+                            <div key={k} style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '4px 0' }}>
+                              <strong>{getFieldLabel(k)}:</strong>{' '}
+                              {isImage ? (
+                                <div style={{ padding: '4px', border: '1px solid #e5e7eb', background: '#fff', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '60px', height: '60px' }}>
+                                  <img src={String(v)} alt="Amostra" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                                </div>
+                              ) : (
+                                <span style={{ fontWeight: 600 }}>{String(v)}</span>
+                              )}
                             </div>
                           );
                         })}

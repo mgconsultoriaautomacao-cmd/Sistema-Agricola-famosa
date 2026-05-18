@@ -95,6 +95,88 @@ export const generateSessionPDF = (session) => {
                 }
             });
         } 
+        else if (form.type === 'form') {
+            const lastRecord = records[records.length - 1];
+            const data = lastRecord?.data || {};
+            
+            const tableRows = [];
+            const imagesToDraw = []; // { label, dataUrl }
+
+            form.fields.forEach(field => {
+                if (field.type === 'section') {
+                    tableRows.push([{ content: field.label, colSpan: 2, styles: { fillColor: [42, 90, 59], textColor: 255, fontStyle: 'bold' } }]);
+                } else if (field.type === 'label-image-selector') {
+                    const val = data[field.name];
+                    if (val) {
+                        tableRows.push([field.label, 'IMAGEM ANEXADA (VER ANEXOS AO FINAL)']);
+                        imagesToDraw.push({ label: field.label, dataUrl: val });
+                    } else {
+                        tableRows.push([field.label, 'NÃO ANEXADO / SEM REGISTRO']);
+                    }
+                } else {
+                    const val = data[field.name];
+                    tableRows.push([field.label, val || '-']);
+                }
+            });
+
+            autoTable(doc, {
+                startY: 130,
+                body: tableRows,
+                theme: 'grid',
+                styles: { fontSize: 8, cellPadding: 5 },
+                columnStyles: {
+                    0: { cellWidth: 200, fontStyle: 'bold' },
+                    1: { cellWidth: 'auto' }
+                }
+            });
+
+            let currentY = doc.lastAutoTable.finalY + 20;
+
+            // Draw Images if any
+            if (imagesToDraw.length > 0) {
+                if (currentY > 500) {
+                    doc.addPage();
+                    drawHeader(doc, session);
+                    currentY = 130;
+                }
+
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'bold');
+                doc.text('COMPROVANTES VISUAIS DE ETIQUETAS (REGISTRO HD)', 40, currentY);
+                currentY += 15;
+
+                let imageX = 40;
+                imagesToDraw.forEach(img => {
+                    if (imageX + 220 > 550) {
+                        imageX = 40;
+                        currentY += 150;
+                        if (currentY > 750) {
+                            doc.addPage();
+                            drawHeader(doc, session);
+                            currentY = 130;
+                        }
+                    }
+
+                    try {
+                        doc.setDrawColor(200);
+                        doc.rect(imageX, currentY, 200, 130);
+                        doc.addImage(img.dataUrl, 'PNG', imageX + 10, currentY + 10, 180, 110);
+                        
+                        doc.setFontSize(7);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text(img.label, imageX, currentY + 142);
+                    } catch (err) {
+                        doc.setFontSize(7);
+                        doc.setFont('helvetica', 'italic');
+                        doc.text(`[Falha ao renderizar imagem: ${img.label}]`, imageX, currentY + 20);
+                    }
+
+                    imageX += 240;
+                });
+                
+                doc.lastAutoTable = { finalY: currentY + 160 };
+            }
+        }
         else if (form.type === 'table-log') {
             const head = [form.columns.map(c => c.label)];
             const body = records.map(r => {

@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { initDB } from '../services/db';
-import { LogOut, User, Sun, Moon, LayoutDashboard, MapPin, FolderOpen, Users } from 'lucide-react';
+import { LogOut, User, Sun, Moon, LayoutDashboard, MapPin, FolderOpen, Users, Tag } from 'lucide-react';
 import logo from '../assets/logo_famosa.png';
 
 export const Layout = ({ adminMode = false }) => {
@@ -94,6 +94,12 @@ export const Layout = ({ adminMode = false }) => {
             onClick={() => navigate('/admin/documents')}
             icon={<FolderOpen size={18} />}
             label="Central de Arquivos" 
+          />
+          <NavButton 
+            active={location.pathname.startsWith('/admin/labels')} 
+            onClick={() => navigate('/admin/labels')}
+            icon={<Tag size={18} />}
+            label="Etiquetas" 
           />
           <NavButton 
             active={location.pathname.startsWith('/admin/users')} 
