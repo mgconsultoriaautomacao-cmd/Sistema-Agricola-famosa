@@ -200,11 +200,11 @@ export const SessionDetail = () => {
                           {idx + 1}. {item.label}
                         </div>
                         {isNo && (
-                          <div style={{ marginTop: '12px', padding: '12px', backgroundColor: '#fff5f5', border: '1px solid #feb2b2', borderRadius: '6px' }}>
-                            <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#c53030', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <div style={{ marginTop: '12px', padding: '12px', backgroundColor: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: '6px' }}>
+                            <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--color-danger)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                               <AlertCircle size={14} /> PLANO DE AÇÃO CORRETIVA:
                             </div>
-                            <div style={{ color: '#742a2a' }}>{response.actionPlan || 'Nenhuma descrição fornecida.'}</div>
+                            <div style={{ color: 'var(--color-text-main)', opacity: 0.9 }}>{response.actionPlan || 'Nenhuma descrição fornecida.'}</div>
                           </div>
                         )}
                       </div>
@@ -334,7 +334,7 @@ export const SessionDetail = () => {
       )}
 
       {session.status === 'signed' && (
-        <div className="glass-panel" style={{ padding: '24px', marginTop: '24px', backgroundColor: '#f8fafc', border: '1px dashed var(--color-secondary)' }}>
+        <div className="glass-panel" style={{ padding: '24px', marginTop: '24px', border: '1px dashed var(--color-secondary)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
