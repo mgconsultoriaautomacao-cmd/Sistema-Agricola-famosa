@@ -148,7 +148,7 @@ export const Dashboard = () => {
                     </div>
                     {!loading && isMounted && analytics.chartData.length > 0 ? (
                         <div style={{ height: '300px', width: '100%', minHeight: '300px', minWidth: 0 }}>
-                            <ResponsiveContainer width="99%" height="100%">
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                                 <AreaChart data={analytics.chartData}>
                                 <defs>
                                     <linearGradient id="colorSessions" x1="0" y1="0" x2="0" y2="1">
@@ -179,7 +179,7 @@ export const Dashboard = () => {
                     </h3>
                     {!loading && isMounted && data.farms.length > 0 ? (
                         <div style={{ height: '300px', width: '100%', minHeight: '300px', minWidth: 0 }}>
-                            <ResponsiveContainer width="99%" height="100%">
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                                 <BarChart data={data.farms.slice(0, 5).map(f => ({ name: f.name.split(' ')[0], "registros": data.sessions.filter(s => s.farmId === f.id).length }))}>
                                 <XAxis dataKey="name" axisLine={false} tickLine={false} fontSize={12} />
                                 <Tooltip cursor={{ fill: 'rgba(0,0,0,0.02)' }} contentStyle={{ borderRadius: '12px', border: 'none' }} />
