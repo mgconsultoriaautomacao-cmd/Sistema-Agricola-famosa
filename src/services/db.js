@@ -771,7 +771,12 @@ export const deleteFarm = async (adminId, farmId) => {
 };
 
 export const getForms = async () => getDB().forms;
-export const getFormById = async (id) => getDB().forms.find(form => form.id === id);
+export const getFormById = async (id) => {
+    const db = getDB();
+    let formId = id;
+    if (formId === 'KURIZET') formId = 'F299.50';
+    return db.forms.find(form => form.id === formId);
+};
 
 // Sessions & Records
 export const getSessions = async (farmId, date) => {
@@ -789,7 +794,22 @@ export const getSessionWithRecords = async (sessionId) => {
     if(!session) return null;
     
     const records = db.records.filter(r => r.sessionId === sessionId).sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-    const form = db.forms.find(f => f.id === session.formId);
+    
+    let formId = session.formId;
+    if (formId === 'KURIZET') formId = 'F299.50';
+    
+    let form = db.forms.find(f => f.id === formId);
+    if (!form) {
+        form = {
+            id: session.formId || 'DESCONHECIDO',
+            title: `Ficha Não Encontrada (${session.formId})`,
+            version: 'V01',
+            type: 'checklist',
+            columns: [],
+            items: []
+        };
+    }
+    
     const farm = db.farms.find(f => f.id === session.farmId);
     
     return { ...session, records, form, farmName: farm?.name || session.farmId };
@@ -900,7 +920,20 @@ export const signAndCloseSession = async (userId, sessionId, signatureData, hacc
     if(sessionIndex === -1) throw new Error("Session not found");
     
     const session = db.sessions[sessionIndex];
-    const form = db.forms.find(f => f.id === session.formId);
+    let formId = session.formId;
+    if (formId === 'KURIZET') formId = 'F299.50';
+    
+    let form = db.forms.find(f => f.id === formId);
+    if (!form) {
+        form = {
+            id: session.formId || 'DESCONHECIDO',
+            title: `Ficha Não Encontrada (${session.formId})`,
+            version: 'V01',
+            type: 'checklist',
+            columns: [],
+            items: []
+        };
+    }
     
     if (form.haccp && haccpPassword !== 'HACCP2024') {
         throw new Error("Senha HACCP incorreta. Documentos HACCP requerem verificação especial.");
