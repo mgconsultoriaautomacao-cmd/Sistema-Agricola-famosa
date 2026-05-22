@@ -12,6 +12,8 @@ const initialData = {
     { id: '3', name: 'Carlos Auditor', role: 'auditor', username: 'auditor', password: 'password123' },
     { id: '4', name: 'Ana Administradora', role: 'admin', username: 'admin', password: 'adminpassword' },
     { id: '5', name: 'Pedro Sede', role: 'sede', username: 'sede', password: 'sedepassword' },
+    { id: 'user_validador', name: 'Equipe Validadora', role: 'validator', username: 'validador', password: 'validadorpassword' },
+    { id: 'user_certificador', name: 'Equipe Certificadora', role: 'certifier', username: 'certificador', password: 'certificadorpassword' }
   ],
   farms: [
     { id: 'FAMOSA', name: 'Famosa (Sede)', sectors: ['Geral', 'Packing House', 'Higiene', 'Campo'] },
@@ -658,6 +660,17 @@ export const initDB = () => {
     if (!db.labels) {
         db.labels = initialData.labels || [];
     }
+    // Ensure validator and certifier accounts are seeded if missing
+    if (db.users) {
+        const hasValidator = db.users.some(u => u.role === 'validator' || u.username === 'validador');
+        if (!hasValidator) {
+            db.users.push({ id: 'user_validador', name: 'Equipe Validadora', role: 'validator', username: 'validador', password: 'validadorpassword' });
+        }
+        const hasCertifier = db.users.some(u => u.role === 'certifier' || u.username === 'certificador');
+        if (!hasCertifier) {
+            db.users.push({ id: 'user_certificador', name: 'Equipe Certificadora', role: 'certifier', username: 'certificador', password: 'certificadorpassword' });
+        }
+    }
     saveDB(db);
 };
 
@@ -688,7 +701,7 @@ export const loginOperator = async (pin) => {
 
 export const loginAdmin = async (username, password) => {
   const db = getDB();
-  return db.users.find(u => u.username === username && u.password === password && ['admin', 'auditor', 'sede'].includes(u.role));
+  return db.users.find(u => u.username === username && u.password === password && ['admin', 'auditor', 'sede', 'validator', 'certifier'].includes(u.role));
 };
 
 export const addUser = async (adminId, userData) => {

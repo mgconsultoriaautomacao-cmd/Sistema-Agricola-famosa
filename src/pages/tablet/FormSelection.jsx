@@ -13,7 +13,7 @@ export const FormSelection = () => {
     const [forms, setForms] = useState([]);
     const [loading, setLoading] = useState(true);
     
-    const isRestricted = !['admin', 'sede'].includes(user?.role);
+    const isRestricted = !['admin', 'sede', 'validator', 'certifier'].includes(user?.role);
     
     // Form Selection State
     const [step, setStep] = useState(1); // 1: farm, 2: sector, 3: form

@@ -117,8 +117,18 @@ export const UserManagement = () => {
                                         borderRadius: '20px', 
                                         fontSize: '0.85rem', 
                                         fontWeight: '500',
-                                        backgroundColor: u.role === 'admin' ? '#FED7D7' : u.role === 'supervisor' ? '#FEEBC8' : '#C6F6D5',
-                                        color: u.role === 'admin' ? '#9B2C2C' : u.role === 'supervisor' ? '#975A16' : '#22543D'
+                                        backgroundColor: u.role === 'admin' ? '#FED7D7' : 
+                                                         u.role === 'supervisor' ? '#FEEBC8' : 
+                                                         u.role === 'validator' ? '#E9D8FD' : 
+                                                         u.role === 'certifier' ? '#BEE3F8' : 
+                                                         u.role === 'sede' ? '#E2E8F0' : 
+                                                         u.role === 'auditor' ? '#EDF2F7' : '#C6F6D5',
+                                        color: u.role === 'admin' ? '#9B2C2C' : 
+                                               u.role === 'supervisor' ? '#975A16' : 
+                                               u.role === 'validator' ? '#553C9A' : 
+                                               u.role === 'certifier' ? '#2B6CB0' : 
+                                               u.role === 'sede' ? '#4A5568' : 
+                                               u.role === 'auditor' ? '#4A5568' : '#22543D'
                                     }}>
                                         {u.role.toUpperCase()}
                                     </span>
@@ -174,6 +184,8 @@ export const UserManagement = () => {
                                     <option value="admin">Administrador</option>
                                     <option value="sede">Sede / HQ</option>
                                     <option value="auditor">Auditor (Somente Leitura)</option>
+                                    <option value="validator">Validador (Validação de Pastas)</option>
+                                    <option value="certifier">Certificador (Equipe de Certificação)</option>
                                 </select>
                             </div>
 

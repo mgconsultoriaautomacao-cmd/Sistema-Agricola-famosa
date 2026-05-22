@@ -54,6 +54,8 @@ export const SessionDetail = () => {
   const isAdmin = user?.role === 'admin';
   const isAuditor = user?.role === 'auditor';
   const isSede = user?.role === 'sede';
+  const isValidator = user?.role === 'validator';
+  const isCertifier = user?.role === 'certifier';
 
   const startEdit = (record) => {
     setEditingRecordId(record.id);
@@ -98,7 +100,7 @@ export const SessionDetail = () => {
           <ArrowLeft size={16} /> Voltar ao Painel
         </button>
         <div style={{ display: 'flex', gap: '12px' }}>
-          {(isAdmin || isAuditor || isSede) && (
+          {(isAdmin || isAuditor || isSede || isValidator || isCertifier) && (
             <div style={{ display: 'flex', gap: '8px' }}>
               <select 
                 value={session.validationStatus || 'pending'} 

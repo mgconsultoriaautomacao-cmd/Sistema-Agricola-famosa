@@ -21,7 +21,7 @@ export const Dashboard = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
     
-    const isRestricted = !['admin', 'sede', 'auditor'].includes(user?.role);
+    const isRestricted = !['admin', 'sede', 'auditor', 'validator', 'certifier'].includes(user?.role);
 
     const [filterFarm, setFilterFarm] = useState(isRestricted ? (user?.farmId || '') : '');
     const [filterDate, setFilterDate] = useState('');

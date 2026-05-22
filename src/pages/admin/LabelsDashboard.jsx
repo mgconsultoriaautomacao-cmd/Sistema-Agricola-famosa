@@ -92,7 +92,7 @@ export const LabelsDashboard = () => {
   };
 
   const handleDeleteLabel = async (labelId, labelName) => {
-    if (!window.confirm(`Tem certeza de que deseja remover a etiqueta "${labelName}"? Esta ação não pode ser desfeita.`)) {
+    if (!window.confirm(`Tem certeza de que deseja remover o produto ou etiqueta "${labelName}"? Esta ação não pode ser desfeita.`)) {
       return;
     }
 
@@ -112,14 +112,14 @@ export const LabelsDashboard = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
           <div>
             <h1 style={{ margin: 0, fontSize: '1.8rem', color: 'var(--color-primary-dark)', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Tag size={28} /> Gestão de Etiquetas de Exportação
+              <Tag size={28} /> Cadastro de Produtos & Etiquetas
             </h1>
             <p style={{ margin: '6px 0 0 0', color: 'var(--color-text-muted)' }}>
-              Cadastre e gerencie o catálogo de rótulos/PLUs autorizados para uso nos checklists de carregamento.
+              Cadastre e gerencie o catálogo de produtos e etiquetas/PLUs autorizados para uso nas linhas de embalagem e checklists de carregamento.
             </p>
           </div>
           <button className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px' }} onClick={handleOpenModal}>
-            <Plus size={20} /> Cadastrar Nova Etiqueta
+            <Plus size={20} /> Cadastrar Novo Produto / Etiqueta
           </button>
         </div>
       </div>
@@ -131,7 +131,7 @@ export const LabelsDashboard = () => {
             <Tag size={24} />
           </div>
           <div>
-            <h4 style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Etiquetas Cadastradas</h4>
+            <h4 style={{ margin: 0, color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Produtos & Etiquetas</h4>
             <h2 style={{ margin: '4px 0 0 0', fontSize: '1.8rem' }}>{stats.total}</h2>
           </div>
         </div>
@@ -151,8 +151,8 @@ export const LabelsDashboard = () => {
         <div className="p-10 text-white animate-pulse">Carregando catálogo de etiquetas...</div>
       ) : labels.length === 0 ? (
         <div className="glass-panel" style={{ padding: '40px', textAlign: 'center' }}>
-          <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', margin: 0 }}>Nenhuma etiqueta cadastrada no sistema.</p>
-          <button className="btn-secondary" style={{ marginTop: '16px' }} onClick={handleOpenModal}>Cadastrar Primeira Etiqueta</button>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', margin: 0 }}>Nenhum produto ou etiqueta cadastrado no sistema.</p>
+          <button className="btn-secondary" style={{ marginTop: '16px' }} onClick={handleOpenModal}>Cadastrar Primeiro Produto / Etiqueta</button>
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
@@ -255,7 +255,7 @@ export const LabelsDashboard = () => {
               {/* Modal Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--glass-border)', paddingBottom: '12px' }}>
                 <h2 style={{ margin: 0, fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Tag size={20} /> Novo Rótulo de Exportação
+                  <Tag size={20} /> Novo Produto ou Rótulo de Exportação
                 </h2>
                 <button
                   style={{ background: 'none', border: 'none', color: 'var(--color-text-muted)', cursor: 'pointer', padding: 4 }}
@@ -268,7 +268,7 @@ export const LabelsDashboard = () => {
               {/* Form */}
               <form onSubmit={handleSaveLabel} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Nome da Etiqueta *</label>
+                  <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Nome do Produto / Etiqueta *</label>
                   <input
                     type="text"
                     required
@@ -313,7 +313,7 @@ export const LabelsDashboard = () => {
 
                 {/* Upload Image Section */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Imagem da Etiqueta *</label>
+                  <label style={{ fontWeight: 600, fontSize: '0.9rem' }}>Imagem do Produto / Etiqueta *</label>
                   <div style={{ display: 'grid', gridTemplateColumns: imagePreview ? '120px 1fr' : '1fr', gap: '16px' }}>
                     {imagePreview && (
                       <div style={{
@@ -364,7 +364,7 @@ export const LabelsDashboard = () => {
                     <X size={18} /> Cancelar
                   </button>
                   <button type="submit" className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: '130px' }}>
-                    <Save size={18} /> Salvar Etiqueta
+                    <Save size={18} /> Salvar Produto / Etiqueta
                   </button>
                 </div>
               </form>

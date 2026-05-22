@@ -118,7 +118,7 @@ export const Layout = ({ adminMode = false }) => {
             active={location.pathname.startsWith('/admin/labels')} 
             onClick={() => navigate('/admin/labels')}
             icon={<Tag size={18} />}
-            label="Etiquetas" 
+            label="Produtos & Etiquetas" 
           />
           <NavButton 
             active={location.pathname.startsWith('/admin/users')} 

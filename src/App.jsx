@@ -90,27 +90,27 @@ const App = () => {
             <Route index element={<Navigate to="/admin/login" replace />} />
             <Route path="login" element={<AdminLogin />} />
             <Route path="dashboard" element={
-              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede']}>
+              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede', 'validator', 'certifier']}>
                 <Dashboard />
               </ProtectedRoute>
             } />
             <Route path="farms" element={
-              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede']}>
+              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede', 'validator', 'certifier']}>
                 <FarmsDashboard />
               </ProtectedRoute>
             } />
             <Route path="documents" element={
-              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede']}>
+              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede', 'validator', 'certifier']}>
                 <DocumentsTable />
               </ProtectedRoute>
             } />
             <Route path="document/:docId" element={
-              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede']}>
+              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede', 'validator', 'certifier']}>
                 <DocumentView />
               </ProtectedRoute>
             } />
             <Route path="document-pdf/:docId" element={
-              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede']}>
+              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede', 'validator', 'certifier']}>
                 <DocumentPDFView />
               </ProtectedRoute>
             } />
@@ -120,12 +120,12 @@ const App = () => {
               </ProtectedRoute>
             } />
             <Route path="labels" element={
-              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede']}>
+              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede', 'validator', 'certifier']}>
                 <LabelsDashboard />
               </ProtectedRoute>
             } />
             <Route path="session/:sessionId" element={
-              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede']}>
+              <ProtectedRoute allowedRoles={['admin', 'auditor', 'sede', 'validator', 'certifier']}>
                 <SessionDetail />
               </ProtectedRoute>
             } />
