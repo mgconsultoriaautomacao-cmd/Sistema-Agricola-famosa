@@ -20,6 +20,7 @@ export const SessionDetail = () => {
   const [editReason, setEditReason] = React.useState('');
   const [refreshKey, setRefreshKey] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
+  const [activeView, setActiveView] = useState('tablet');
 
   React.useEffect(() => {
     const load = async () => {
@@ -177,6 +178,56 @@ export const SessionDetail = () => {
         </div>
       </div>
 
+      {/* Seletor de Visualização Premium */}
+      {form.type !== 'checklist' && (
+        <div style={{ 
+            display: 'inline-flex', 
+            background: 'rgba(0,0,0,0.03)', 
+            padding: '4px', 
+            borderRadius: '8px', 
+            marginBottom: '24px',
+            border: '1px solid var(--glass-border)',
+            gap: '4px'
+        }}>
+            <button 
+                type="button"
+                onClick={() => setActiveView('tablet')}
+                style={{ 
+                    padding: '8px 16px', 
+                    fontSize: '0.85rem', 
+                    borderRadius: '6px', 
+                    background: activeView === 'tablet' ? 'var(--color-primary)' : 'transparent',
+                    color: activeView === 'tablet' ? 'white' : 'var(--color-text-muted)',
+                    fontWeight: 600,
+                    boxShadow: activeView === 'tablet' ? '0 2px 8px rgba(5, 150, 105, 0.2)' : 'none',
+                    border: 'none',
+                    cursor: 'pointer'
+                }}
+            >
+                <BookOpen size={14} style={{ marginRight: '6px' }} />
+                Visualização da Pasta (Estilo Tablet)
+            </button>
+            <button 
+                type="button"
+                onClick={() => setActiveView('audit')}
+                style={{ 
+                    padding: '8px 16px', 
+                    fontSize: '0.85rem', 
+                    borderRadius: '6px', 
+                    background: activeView === 'audit' ? 'var(--color-primary)' : 'transparent',
+                    color: activeView === 'audit' ? 'white' : 'var(--color-text-muted)',
+                    fontWeight: 600,
+                    boxShadow: activeView === 'audit' ? '0 2px 8px rgba(5, 150, 105, 0.2)' : 'none',
+                    border: 'none',
+                    cursor: 'pointer'
+                }}
+            >
+                <FileText size={14} style={{ marginRight: '6px' }} />
+                Trilha de Auditoria (Registros Brutos)
+            </button>
+        </div>
+      )}
+
       {/* Renderização Condicional por Tipo de Formulário */}
       {form.type === 'checklist' && lastRecord?.data?.checklist ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -233,7 +284,17 @@ export const SessionDetail = () => {
             </div>
           ))}
         </div>
+      ) : activeView === 'tablet' ? (
+        /* Visualização da Pasta Prefilada estilo Tablet */
+        form.type === 'table-log' ? (
+          <TableLogPrefilled form={form} records={records} allUsers={allUsers} />
+        ) : form.type === 'grid-inspection' ? (
+          <GridInspectionPrefilled form={form} records={records} />
+        ) : (
+          <FormPrefilled form={form} records={records} allUsers={allUsers} />
+        )
       ) : (
+        /* Visualização da Trilha de Auditoria (Registros Brutos) */
         <div className="glass-panel" style={{ padding: '24px' }}>
              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                 <ClipboardCheck size={20} color="var(--color-primary)" />
@@ -542,6 +603,263 @@ const ValidationSignaturePad = ({ sessionId, userId, onSigned }) => {
         <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.8rem' }} onClick={handleClear}>Limpar</button>
         <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '0.8rem' }} onClick={handleSign}>Assinar Homologação</button>
       </div>
+    </div>
+  );
+};
+
+const TableLogPrefilled = ({ form, records, allUsers }) => {
+  const ReadCell = ({ column, value }) => {
+    if (column.type === 'boolean') {
+      if (value === 'SIM' || value === true || value === 'true') {
+        return <span className="status-badge validated" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>SIM</span>;
+      }
+      if (value === 'NÃO' || value === false || value === 'false') {
+        return <span className="status-badge" style={{ backgroundColor: '#fee2e2', color: '#991b1b', padding: '2px 8px', fontSize: '0.75rem', borderRadius: '99px', fontWeight: 'bold' }}>NÃO</span>;
+      }
+      return <span style={{ color: 'var(--color-text-muted)' }}>--</span>;
+    }
+    
+    if (value && String(value).startsWith('data:image')) {
+      return (
+        <div style={{ width: '40px', height: '40px', borderRadius: '4px', border: '1px solid var(--glass-border)', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+          <img src={value} alt="Anexo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+        </div>
+      );
+    }
+    
+    return <span>{value || '--'}</span>;
+  };
+
+  return (
+    <div className="glass-panel" style={{ overflowX: 'auto', padding: 0 }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1000px' }}>
+        <thead>
+          <tr style={{ backgroundColor: 'rgba(0,0,0,0.03)', borderBottom: '2px solid var(--color-primary-light)' }}>
+            <th style={{ padding: '14px', textAlign: 'left', fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 800 }}>Horário</th>
+            {form.columns.map((col) => (
+              <th key={col.key} style={{ 
+                padding: '14px', 
+                textAlign: 'left', 
+                fontSize: '0.85rem',
+                color: 'var(--color-text-muted)',
+                fontWeight: 800
+              }}>
+                {col.label}
+              </th>
+            ))}
+            <th style={{ padding: '14px', textAlign: 'left', fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 800 }}>Responsável</th>
+          </tr>
+        </thead>
+        <tbody>
+          {records.map((record) => {
+            const operatorName = allUsers.find(u => u.id === record.userId)?.name || record.userId;
+            return (
+              <tr key={record.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                <td style={{ padding: '12px', fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-primary-dark)', width: '90px' }}>
+                  {format(new Date(record.timestamp), 'HH:mm')}
+                </td>
+                {form.columns.map(col => {
+                  const value = record.data[col.key];
+                  return (
+                    <td key={col.key} style={{ padding: '12px', fontSize: '0.9rem' }}>
+                      <ReadCell column={col} value={value} />
+                    </td>
+                  );
+                })}
+                <td style={{ padding: '12px', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+                  {operatorName}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+const FormPrefilled = ({ form, records, allUsers }) => {
+  const getFormSections = () => {
+    let currentSection = { title: 'Geral', fields: [] };
+    const parsedSections = [currentSection];
+    (form.fields || []).forEach(field => {
+      if (field.type === 'section') {
+        currentSection = { title: field.label, fields: [] };
+        parsedSections.push(currentSection);
+      } else {
+        currentSection.fields.push(field);
+      }
+    });
+    if (parsedSections[0].fields.length === 0 && parsedSections.length > 1) {
+      parsedSections.shift();
+    }
+    return parsedSections;
+  };
+
+  const parsedSections = getFormSections();
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      {records.map((record, index) => {
+        const operatorName = allUsers.find(u => u.id === record.userId)?.name || record.userId;
+        
+        return (
+          <div key={record.id} className="glass-panel" style={{ padding: '0', overflow: 'hidden', borderLeft: '6px solid var(--color-primary)' }}>
+            <div style={{ 
+              padding: '16px 24px', 
+              backgroundColor: 'rgba(5, 150, 105, 0.05)', 
+              borderBottom: '1px solid var(--glass-border)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '12px'
+            }}>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--color-primary-dark)' }}>
+                Ficha de Lançamento #{records.length - index}
+              </h3>
+              <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
+                Lançado às <span style={{ color: 'var(--color-text-main)', fontWeight: 700 }}>{format(new Date(record.timestamp), 'HH:mm')}</span> por <span style={{ color: 'var(--color-text-main)', fontWeight: 700 }}>{operatorName}</span>
+              </div>
+            </div>
+            
+            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {parsedSections.map(sec => (
+                <div key={sec.title}>
+                  <h4 style={{ 
+                    margin: '0 0 16px 0', 
+                    fontSize: '0.95rem', 
+                    borderBottom: '1px solid var(--glass-border)', 
+                    paddingBottom: '6px', 
+                    color: 'var(--color-primary)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}>{sec.title}</h4>
+                  
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
+                    gap: '20px' 
+                  }}>
+                    {sec.fields.map(field => {
+                      const value = record.data[field.name];
+                      const isImage = value && String(value).startsWith('data:image');
+                      
+                      return (
+                        <div key={field.name} style={{ 
+                          padding: '12px', 
+                          background: 'rgba(0,0,0,0.01)', 
+                          border: '1px solid rgba(0,0,0,0.03)', 
+                          borderRadius: '8px' 
+                        }}>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 700, marginBottom: '6px', textTransform: 'uppercase' }}>
+                            {field.label}
+                          </div>
+                          <div style={{ fontSize: '0.95rem', fontWeight: 600 }}>
+                            {isImage ? (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
+                                <div style={{ width: '80px', height: '80px', borderRadius: '6px', border: '1px solid var(--glass-border)', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                  <img src={value} alt="Amostra" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                                </div>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--color-success)', fontWeight: 'bold' }}>Amostra Rótulo</span>
+                              </div>
+                            ) : field.type === 'boolean' ? (
+                              value === 'SIM' ? (
+                                <span className="status-badge validated" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>SIM</span>
+                              ) : value === 'NÃO' ? (
+                                <span className="status-badge" style={{ backgroundColor: '#fee2e2', color: '#991b1b', padding: '2px 8px', fontSize: '0.75rem', borderRadius: '99px', fontWeight: 'bold' }}>NÃO</span>
+                              ) : (
+                                <span style={{ color: 'var(--color-text-muted)' }}>--</span>
+                              )
+                            ) : (
+                              value || <span style={{ color: 'var(--color-text-muted)', fontWeight: 400, fontStyle: 'italic' }}>Não preenchido</span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const GridInspectionPrefilled = ({ form, records }) => {
+  const gridData = useMemo(() => {
+    const initial = {};
+    if (form.items) {
+      form.items.forEach(item => {
+        initial[item.id] = form.columns.reduce((acc, col) => ({
+          ...acc, [col.key]: false
+        }), {});
+      });
+    }
+    
+    if (records && records.length > 0) {
+      const latestRecord = [...records].reverse().find(r => r.data && r.data.grid);
+      if (latestRecord && latestRecord.data.grid) {
+        return latestRecord.data.grid;
+      }
+    }
+    return initial;
+  }, [form, records]);
+
+  return (
+    <div className="glass-panel" style={{ overflowX: 'auto', padding: 0 }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr style={{ backgroundColor: 'rgba(0,0,0,0.03)', borderBottom: '2px solid var(--color-primary-light)' }}>
+            <th style={{ padding: '16px', textAlign: 'left', fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 800 }}>Equipamento / Local</th>
+            {form.columns.map(col => (
+              <th key={col.key} style={{ padding: '16px', textAlign: 'center', fontSize: '0.85rem', color: 'var(--color-text-muted)', fontWeight: 800 }}>
+                {col.label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {form.items.map(item => (
+            <tr key={item.id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+              <td style={{ padding: '12px 16px' }}>
+                <div style={{ fontWeight: '600' }}>{item.label}</div>
+                <code style={{ fontSize: '0.75rem', opacity: 0.7 }}>{item.id}</code>
+              </td>
+              {form.columns.map(col => {
+                const isSelected = gridData[item.id]?.[col.key];
+                const isNegative = ['broken', 'burned', 'removed', 'quebrada', 'queimada', 'retirada'].includes(col.key.toLowerCase());
+                
+                return (
+                  <td 
+                    key={col.key} 
+                    style={{ 
+                      textAlign: 'center', 
+                      backgroundColor: isSelected ? (isNegative ? 'rgba(239, 68, 68, 0.05)' : 'rgba(34, 197, 94, 0.05)') : 'transparent',
+                    }}
+                  >
+                    <div style={{ 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center',
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      border: `2px solid ${isSelected ? (isNegative ? 'var(--color-danger)' : 'var(--color-success)') : '#e2e8f0'}`,
+                      color: isSelected ? (isNegative ? 'var(--color-danger)' : 'var(--color-success)') : '#cbd5e1'
+                    }}>
+                      {isSelected && (isNegative ? <AlertCircle size={18} /> : <CheckCircle size={18} />)}
+                    </div>
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
