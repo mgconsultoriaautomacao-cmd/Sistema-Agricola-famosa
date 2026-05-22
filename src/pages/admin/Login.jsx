@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Building } from 'lucide-react';
+import { Building, AlertTriangle, Smartphone } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export const AdminLogin = () => {
@@ -72,7 +72,21 @@ export const AdminLogin = () => {
                         />
                     </div>
                     
-                    {error && <div style={{ color: 'var(--color-danger)', marginBottom: '20px', fontWeight: 600, fontSize: '0.9rem' }}>⚠️ {error}</div>}
+                    {error && (
+                        <div style={{ 
+                            color: 'var(--color-danger)', 
+                            marginBottom: '20px', 
+                            fontWeight: 600, 
+                            fontSize: '0.9rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px'
+                        }}>
+                            <AlertTriangle size={16} />
+                            <span>{error}</span>
+                        </div>
+                    )}
 
                     <button type="submit" className="btn-primary" style={{ width: '100%', padding: '16px' }}>
                         Entrar no Painel de Controle
@@ -97,7 +111,8 @@ export const AdminLogin = () => {
                                 gap: '8px'
                             }}
                         >
-                            📱 Ir para Módulo de Campo (Tablet)
+                            <Smartphone size={16} />
+                            Ir para Módulo de Campo (Tablet)
                         </button>
                     </div>
                     

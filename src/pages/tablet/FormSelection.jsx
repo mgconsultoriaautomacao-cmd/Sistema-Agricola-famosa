@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { getFarms, getForms, openSession } from '../../services/db';
-import { FileText, MapPin, Layers, ArrowLeft, ChevronRight, Search, Activity } from 'lucide-react';
+import { FileText, MapPin, Layers, ArrowLeft, ChevronRight, Search, Activity, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const FormSelection = () => {
@@ -238,7 +238,7 @@ const StepCircle = ({ num, active, done, label }) => (
             margin: '0 auto 8px',
             boxShadow: active ? '0 0 15px rgba(5, 150, 105, 0.2)' : 'none'
         }}>
-            {done ? '✓' : num}
+            {done ? <Check size={18} strokeWidth={3} /> : num}
         </div>
         <div style={{ fontSize: '0.7rem', fontWeight: 700, color: active ? 'var(--color-primary)' : 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
     </div>

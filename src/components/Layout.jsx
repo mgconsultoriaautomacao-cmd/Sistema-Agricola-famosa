@@ -3,7 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { initDB } from '../services/db';
-import { LogOut, User, Sun, Moon, LayoutDashboard, MapPin, FolderOpen, Users, Tag } from 'lucide-react';
+import { LogOut, User, Sun, Moon, LayoutDashboard, MapPin, FolderOpen, Users, Tag, Smartphone, Lock } from 'lucide-react';
 import logo from '../assets/logo_famosa.png';
 
 export const Layout = ({ adminMode = false }) => {
@@ -65,10 +65,29 @@ export const Layout = ({ adminMode = false }) => {
             <button 
               onClick={() => navigate(adminMode ? '/' : '/admin/login')} 
               className="btn-secondary" 
-              style={{ padding: '8px 12px', fontSize: '0.75rem', fontWeight: 700, borderColor: 'var(--color-accent)', color: 'var(--color-accent)' }}
+              style={{ 
+                padding: '8px 12px', 
+                fontSize: '0.75rem', 
+                fontWeight: 700, 
+                borderColor: 'var(--color-accent)', 
+                color: 'var(--color-accent)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
               title={adminMode ? "Módulo de Campo" : "HQ Administrativo"}
             >
-              {adminMode ? "📱 PWA Campo" : "🔒 HQ Admin"}
+              {adminMode ? (
+                <>
+                  <Smartphone size={14} />
+                  <span>PWA Campo</span>
+                </>
+              ) : (
+                <>
+                  <Lock size={14} />
+                  <span>HQ Admin</span>
+                </>
+              )}
             </button>
           </div>
         )}
