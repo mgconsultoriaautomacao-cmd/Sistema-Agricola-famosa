@@ -1,11 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getSessionWithRecords, getUsers, editRecord, updateSessionStatus } from '../../services/db';
+import { getSessionWithRecords, getUsers, editRecord, updateSessionStatus, signSessionValidation, clearValidationSignature } from '../../services/db';
 import { generateSessionPDF } from '../../services/pdf';
 import logo from '../../assets/logo_famosa.png';
 import { format } from 'date-fns';
 import { ArrowLeft, Download, BookOpen, FileText, CheckCircle, AlertCircle, HelpCircle, ClipboardCheck, Edit2, Save, X } from 'lucide-react';
+
 
 export const SessionDetail = () => {
   const { sessionId } = useParams();
@@ -336,29 +337,211 @@ export const SessionDetail = () => {
       )}
 
       {session.status === 'signed' && (
-        <div className="glass-panel" style={{ padding: '24px', marginTop: '24px', border: '1px dashed var(--color-secondary)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', marginTop: '24px' }}>
+          
+          {/* Card 1: Assinatura do Responsável (Operador) */}
+          <div className="glass-panel" style={{ padding: '24px', border: '1px dashed var(--color-secondary)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                      <FileText size={20} color="var(--color-secondary)" />
+                      <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Autenticação do Responsável</h3>
+                  </div>
+                  <div style={{ fontSize: '0.9rem' }}>
+                      <p style={{ margin: '4px 0' }}><strong>Assinado por:</strong> {allUsers.find(u => u.id === session.signedBy)?.name || session.signedBy}</p>
+                      <p style={{ margin: '4px 0' }}><strong>Data da Coleta:</strong> {format(new Date(session.signedAt), 'dd/MM/yyyy HH:mm')}</p>
+                      <p style={{ margin: '4px 0', color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>ID Transação: {session.id}</p>
+                  </div>
+                </div>
+                <div style={{ width: '120px', height: '60px', border: '1px solid #ddd', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
+                   {session.signature ? (
+                       <img src={session.signature} alt="Assinatura Digital" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                   ) : (
+                      <small style={{ color: '#999' }}>Assinatura Digital</small>
+                   )}
+                </div>
+            </div>
+          </div>
+
+          {/* Card 2: Assinatura do Verificador (Validador / Certificador) */}
+          <div className="glass-panel" style={{ padding: '24px', border: '1px dashed var(--color-warning)' }}>
+            {session.validationSignature ? (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                      <CheckCircle size={20} color="var(--color-success)" />
+                      <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Homologação do Verificador</h3>
+                  </div>
+                  <div style={{ fontSize: '0.9rem' }}>
+                      <p style={{ margin: '4px 0' }}><strong>Validado por:</strong> {allUsers.find(u => u.id === session.validationSignedBy)?.name || session.validationSignedBy}</p>
+                      <p style={{ margin: '4px 0' }}><strong>Data da Validação:</strong> {format(new Date(session.validationSignedAt), 'dd/MM/yyyy HH:mm')}</p>
+                      <p style={{ margin: '4px 0', color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>Status: {session.validationStatus?.toUpperCase() || 'VALIDADO'}</p>
+                  </div>
+                  {(isAdmin || isValidator || isCertifier) && (
+                    <button 
+                      className="btn-secondary" 
+                      onClick={async () => {
+                        if (confirm("Deseja mesmo remover a assinatura de homologação?")) {
+                          await clearValidationSignature(session.id);
+                          setRefreshKey(k => k + 1);
+                        }
+                      }} 
+                      style={{ padding: '4px 8px', fontSize: '0.75rem', marginTop: '8px' }}
+                    >
+                      Remover Assinatura
+                    </button>
+                  )}
+                </div>
+                <div style={{ width: '120px', height: '60px', border: '1px solid #ddd', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
+                   <img src={session.validationSignature} alt="Assinatura Validador" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                </div>
+              </div>
+            ) : (
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                    <FileText size={20} color="var(--color-secondary)" />
-                    <h3 style={{ margin: 0 }}>Autenticação do Documento</h3>
+                    <AlertCircle size={20} color="var(--color-warning)" />
+                    <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Assinatura de Homologação</h3>
                 </div>
-                <div style={{ fontSize: '0.9rem' }}>
-                    <p style={{ margin: '4px 0' }}><strong>Assinado Digitalmente por:</strong> {allUsers.find(u => u.id === session.signedBy)?.name || session.signedBy}</p>
-                    <p style={{ margin: '4px 0' }}><strong>Data/Hora do Preenchimento:</strong> {format(new Date(session.signedAt), 'dd/MM/yyyy HH:mm')}</p>
-                    <p style={{ margin: '4px 0', color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>ID da Transação: {session.id}</p>
-                </div>
+                {(isAdmin || isValidator || isCertifier) ? (
+                  <ValidationSignaturePad 
+                    sessionId={session.id} 
+                    userId={user.id} 
+                    onSigned={() => setRefreshKey(k => k + 1)} 
+                  />
+                ) : (
+                  <p style={{ margin: '8px 0 0 0', fontSize: '0.9rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
+                    Aguardando assinatura de homologação da equipe de validação ou certificação.
+                  </p>
+                )}
               </div>
-              <div style={{ width: '180px', height: '80px', border: '1px solid #ddd', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
-                 {session.signature ? (
-                     <img src={session.signature} alt="Assinatura Digital" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
-                 ) : (
-                    <small style={{ color: '#999' }}>Assinatura Digital</small>
-                 )}
-              </div>
+            )}
           </div>
+
         </div>
       )}
+    </div>
+  );
+};
+
+const ValidationSignaturePad = ({ sessionId, userId, onSigned }) => {
+  const canvasRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(true);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+    canvas.height = 100 * window.devicePixelRatio;
+    canvas.style.height = '100px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 2;
+  }, []);
+
+  const getCanvasContext = () => {
+    const c = canvasRef.current;
+    if (!c) return null;
+    const ctx = c.getContext('2d');
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 2;
+    return ctx;
+  };
+
+  const startDrawing = (e) => {
+    e.preventDefault();
+    setIsDrawing(true);
+    const ctx = getCanvasContext();
+    if (!ctx) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    ctx.beginPath();
+    ctx.moveTo((clientX - rect.left), (clientY - rect.top));
+    setIsEmpty(false);
+  };
+
+  const draw = (e) => {
+    if (!isDrawing) return;
+    e.preventDefault();
+    const ctx = getCanvasContext();
+    if (!ctx) return;
+    const rect = canvasRef.current.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    ctx.lineTo((clientX - rect.left), (clientY - rect.top));
+    ctx.stroke();
+  };
+
+  const stopDrawing = (e) => {
+    if (e && e.cancelable) e.preventDefault();
+    setIsDrawing(false);
+  };
+
+  const handleClear = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    setIsEmpty(true);
+  };
+
+  const handleSign = async () => {
+    if (isEmpty) {
+        alert("Por favor, realize a assinatura digital antes de salvar.");
+        return;
+    }
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const data = canvas.toDataURL('image/png');
+    try {
+      await signSessionValidation(userId, sessionId, data);
+      onSigned();
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const handleTouchStart = (e) => startDrawing(e);
+    const handleTouchMove = (e) => draw(e);
+    const handleTouchEnd = (e) => stopDrawing(e);
+
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+    return () => {
+        canvas.removeEventListener('touchstart', handleTouchStart);
+        canvas.removeEventListener('touchmove', handleTouchMove);
+        canvas.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isDrawing]);
+
+  return (
+    <div style={{ marginTop: '12px' }}>
+      <div style={{ border: '2px solid var(--glass-border)', borderRadius: '8px', overflow: 'hidden', backgroundColor: 'white' }}>
+        <canvas
+          ref={canvasRef}
+          onMouseDown={startDrawing}
+          onMouseMove={draw}
+          onMouseUp={stopDrawing}
+          onMouseLeave={stopDrawing}
+          style={{ width: '100%', height: 100, display: 'block', cursor: 'crosshair', touchAction: 'none' }}
+        />
+      </div>
+      <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
+        <button className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.8rem' }} onClick={handleClear}>Limpar</button>
+        <button className="btn-primary" style={{ padding: '6px 12px', fontSize: '0.8rem' }} onClick={handleSign}>Assinar Homologação</button>
+      </div>
     </div>
   );
 };
@@ -388,4 +571,5 @@ const StatusBadge = ({ status }) => {
 };
 
 export default SessionDetail;
+
 

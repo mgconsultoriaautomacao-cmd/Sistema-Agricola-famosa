@@ -1018,3 +1018,33 @@ export const deleteLabel = async (userId, labelId) => {
     await logAction(userId, 'DELETE_LABEL', `Excluiu a etiqueta ${label.name}`, db);
     saveDB(db);
 };
+
+export const signSessionValidation = async (userId, sessionId, signatureData) => {
+    const db = getDB();
+    const sessionIndex = db.sessions.findIndex(s => s.id === sessionId);
+    if (sessionIndex === -1) throw new Error("Sessão não encontrada.");
+    
+    db.sessions[sessionIndex].validationSignature = signatureData;
+    db.sessions[sessionIndex].validationSignedAt = new Date().toISOString();
+    db.sessions[sessionIndex].validationSignedBy = userId;
+    db.sessions[sessionIndex].validationStatus = 'validated';
+    
+    await logAction(userId, 'SIGN_VALIDATION', `Validation signed by ${userId} for session ${sessionId}`, db);
+    saveDB(db);
+    return db.sessions[sessionIndex];
+};
+
+export const clearValidationSignature = async (sessionId) => {
+    const db = getDB();
+    const sessionIndex = db.sessions.findIndex(s => s.id === sessionId);
+    if (sessionIndex === -1) throw new Error("Sessão não encontrada.");
+    
+    delete db.sessions[sessionIndex].validationSignature;
+    delete db.sessions[sessionIndex].validationSignedAt;
+    delete db.sessions[sessionIndex].validationSignedBy;
+    db.sessions[sessionIndex].validationStatus = 'pending';
+    
+    saveDB(db);
+    return db.sessions[sessionIndex];
+};
+

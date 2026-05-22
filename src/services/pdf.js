@@ -232,28 +232,42 @@ export const generateSessionPDF = (session) => {
             });
         }
 
-        const finalY = (doc.lastAutoTable?.finalY || 110) + 40;
-        if (finalY < 740) {
-            doc.line(40, finalY + 10, 240, finalY + 10);
-            doc.line(315, finalY + 10, 515, finalY + 10);
-            doc.setFontSize(8);
-            doc.text('Assinatura do Responsável', 40, finalY + 22);
-            doc.text('Assinatura do Verificador', 315, finalY + 22);
-            
-            if (session.status === 'signed') {
-                if (session.signature) {
-                    try {
-                        doc.addImage(session.signature, 'PNG', 45, finalY - 30, 100, 40);
-                    } catch (e) {
-                        doc.setFont('courier', 'italic');
-                        doc.text(`Assinado: ${getUserName(session.signedBy)}`, 50, finalY + 5);
-                    }
-                } else {
+        let finalY = (doc.lastAutoTable?.finalY || 110) + 40;
+        if (finalY >= 740) {
+            doc.addPage();
+            drawHeader(doc, session);
+            finalY = 150;
+        }
+
+        doc.line(40, finalY + 10, 240, finalY + 10);
+        doc.line(315, finalY + 10, 515, finalY + 10);
+        doc.setFontSize(8);
+        doc.text('Assinatura do Responsável', 40, finalY + 22);
+        doc.text('Assinatura do Verificador', 315, finalY + 22);
+        
+        if (session.status === 'signed') {
+            if (session.signature) {
+                try {
+                    doc.addImage(session.signature, 'PNG', 45, finalY - 30, 100, 40);
+                } catch (e) {
                     doc.setFont('courier', 'italic');
                     doc.text(`Assinado: ${getUserName(session.signedBy)}`, 50, finalY + 5);
                 }
+            } else {
+                doc.setFont('courier', 'italic');
+                doc.text(`Assinado: ${getUserName(session.signedBy)}`, 50, finalY + 5);
             }
         }
+
+        if (session.validationSignature) {
+            try {
+                doc.addImage(session.validationSignature, 'PNG', 320, finalY - 30, 100, 40);
+            } catch (e) {
+                doc.setFont('courier', 'italic');
+                doc.text(`Assinado: ${getUserName(session.validationSignedBy)}`, 325, finalY + 5);
+            }
+        }
+
 
         const fileName = `${form.id}_${session.farmName}_${format(new Date(), 'yyyyMMdd_HHmm')}.pdf`;
         doc.save(fileName);
