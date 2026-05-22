@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSessionWithRecords, addRecord, editRecord, deleteRecord } from '../../services/db';
+import { getSessionWithRecords, addRecord, editRecord, deleteRecord, getAutocompleteSuggestions } from '../../services/db';
 import { useAuth } from '../../contexts/AuthContext';
-import { ChevronLeft, Save, Plus, Trash2, Edit2, CheckCircle } from 'lucide-react';
+import { ChevronLeft, Save, Plus, Trash2, Edit2, CheckCircle, ArrowDown } from 'lucide-react';
 import { format } from 'date-fns';
 
 export const TableLogEntry = () => {
@@ -13,6 +13,17 @@ export const TableLogEntry = () => {
     const [sessionData, setSessionData] = useState(null);
     const [localRecords, setLocalRecords] = useState([]);
     const [isSaving, setIsSaving] = useState(false);
+
+    // Estados de autocomplete
+    const [responsibles, setResponsibles] = useState([]);
+    const [visitors, setVisitors] = useState([]);
+    const [companies, setCompanies] = useState([]);
+
+    const loadAutocompletes = () => {
+        setResponsibles(getAutocompleteSuggestions('responsibles'));
+        setVisitors(getAutocompleteSuggestions('visitors'));
+        setCompanies(getAutocompleteSuggestions('companies'));
+    };
 
     const loadSession = () => {
         getSessionWithRecords(sessionId).then(data => {
@@ -26,12 +37,24 @@ export const TableLogEntry = () => {
                     isNew: true
                 })));
             }
+            loadAutocompletes();
         });
     };
 
     useEffect(() => {
         loadSession();
     }, [sessionId]);
+
+    const handleFillDown = (columnKey) => {
+        if (localRecords.length === 0) return;
+        const firstVal = localRecords[0][columnKey];
+        if (firstVal === undefined) return;
+        
+        setLocalRecords(prev => prev.map(row => ({
+            ...row,
+            [columnKey]: firstVal
+        })));
+    };
 
     if (!sessionData) return <div className="p-10 text-white animate-pulse">Carregando Registros...</div>;
     const { form, status } = sessionData;
@@ -139,7 +162,33 @@ export const TableLogEntry = () => {
                                     fontSize: '0.85rem',
                                     width: idx === 0 ? '300px' : 'auto' 
                                 }}>
-                                    {col.label}
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                                        <span>{col.label}</span>
+                                        {!isClosed && !col.disabled && localRecords.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => handleFillDown(col.key)}
+                                                title="Copiar valor da 1ª linha para todas debaixo"
+                                                style={{
+                                                    background: 'rgba(16, 185, 129, 0.1)',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    padding: '4px 6px',
+                                                    color: 'var(--color-primary)',
+                                                    cursor: 'pointer',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    transition: 'all 0.2s ease',
+                                                }}
+                                                className="btn-fill-down"
+                                                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-primary)'; e.currentTarget.style.color = '#fff'; }}
+                                                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'; e.currentTarget.style.color = 'var(--color-primary)'; }}
+                                            >
+                                                <ArrowDown size={14} />
+                                            </button>
+                                        )}
+                                    </div>
                                 </th>
                             ))}
                             {!isClosed && <th style={{ width: '60px' }}></th>}
@@ -197,8 +246,50 @@ export const TableLogEntry = () => {
                     </button>
                 </div>
             )}
+
+            {/* Datalists de sugestões de autocomplete */}
+            <datalist id="list-responsibles">
+                {responsibles.map(name => <option key={name} value={name} />)}
+            </datalist>
+            <datalist id="list-visitors">
+                {visitors.map(name => <option key={name} value={name} />)}
+            </datalist>
+            <datalist id="list-companies">
+                {companies.map(name => <option key={name} value={name} />)}
+            </datalist>
         </div>
     );
+};
+
+const getDatalistId = (colKey) => {
+    if (!colKey) return null;
+    const key = colKey.toLowerCase();
+    if (
+        key.includes('responsible') || 
+        key.includes('responsavel') || 
+        key.includes('operator') || 
+        key.includes('employee') || 
+        key.includes('user') ||
+        key.includes('funcionario')
+    ) {
+        return 'list-responsibles';
+    }
+    if (key.includes('visitor') || key.includes('visitante') || key.includes('visita')) {
+        return 'list-visitors';
+    }
+    if (
+        key.includes('company') || 
+        key.includes('empresa') || 
+        key.includes('supplier') || 
+        key.includes('fornecedor') ||
+        key.includes('cliente') ||
+        key.includes('destino') ||
+        key.includes('brand') ||
+        key.includes('marca')
+    ) {
+        return 'list-companies';
+    }
+    return null;
 };
 
 const RenderCell = ({ column, value, onChange, disabled }) => {
@@ -240,6 +331,8 @@ const RenderCell = ({ column, value, onChange, disabled }) => {
         );
     }
 
+    const listId = getDatalistId(column.key);
+
     return (
         <input 
             type={column.type === 'date' ? 'date' : column.type === 'time' ? 'time' : 'text'}
@@ -248,6 +341,7 @@ const RenderCell = ({ column, value, onChange, disabled }) => {
             onChange={(e) => onChange(e.target.value)}
             disabled={disabled}
             placeholder={column.note}
+            list={listId || undefined}
         />
     );
 };

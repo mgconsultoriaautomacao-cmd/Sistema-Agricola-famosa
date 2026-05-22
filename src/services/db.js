@@ -862,6 +862,10 @@ export const openSession = async (userId, formId, farmId) => {
 
 export const addRecord = async (userId, sessionId, recordData) => {
     const db = getDB();
+    
+    // Captura autocompletes automaticamente
+    harvestAutocompleteValues(recordData);
+
     const newRecord = {
         id: `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         sessionId,
@@ -891,6 +895,9 @@ export const editRecord = async (userId, sessionId, recordId, newData, isAdmin =
     const recordIndex = db.records.findIndex(r => r.id === recordId);
     if (recordIndex === -1) throw new Error("Record not found");
     
+    // Captura autocompletes automaticamente
+    harvestAutocompleteValues(newData);
+
     const record = db.records[recordIndex];
     record.history = record.history || [];
     record.history.push({
@@ -1046,5 +1053,75 @@ export const clearValidationSignature = async (sessionId) => {
     
     saveDB(db);
     return db.sessions[sessionIndex];
+};
+
+// --- AUTOCOMPLETE DE PRÉ-CADASTRO ---
+
+export const getAutocompleteSuggestions = (type) => {
+    const key = `agricola_famosa_autocomplete_${type}`;
+    const stored = localStorage.getItem(key);
+    if (stored) {
+        try {
+            return JSON.parse(stored);
+        } catch (e) {
+            console.error("Erro ao ler autocomplete:", e);
+        }
+    }
+    // Valores padrão realistas baseados no banco
+    if (type === 'responsibles') {
+        return ['MANOEL', 'MARIA SUPERVISORA', 'JOÃO OPERADOR', 'CARLOS AUDITOR', 'ANA ADMINISTRADORA', 'PEDRO SEDE'];
+    }
+    if (type === 'visitors') {
+        return ['ALEXANDRE BARBOSA', 'AMANDA KELLY GONCALVES', 'ANTONIO EDGARD', 'CLEILSON MIGUEL'];
+    }
+    if (type === 'companies') {
+        return ['FAMOSA', 'TESCO', 'MC CONSULTORIA', 'AGRO BRASIL'];
+    }
+    return [];
+};
+
+export const addAutocompleteSuggestion = (type, value) => {
+    if (!value || typeof value !== 'string') return;
+    const trimmed = value.trim().toUpperCase();
+    if (!trimmed || trimmed === 'NÃO' || trimmed === 'SIM') return; // Ignora booleanos simples
+
+    const key = `agricola_famosa_autocomplete_${type}`;
+    const list = getAutocompleteSuggestions(type);
+    if (!list.includes(trimmed)) {
+        const newList = [trimmed, ...list].slice(0, 50); // Limita a 50 itens
+        localStorage.setItem(key, JSON.stringify(newList));
+    }
+};
+
+const harvestAutocompleteValues = (data) => {
+    if (!data || typeof data !== 'object') return;
+    Object.entries(data).forEach(([key, value]) => {
+        if (!value || typeof value !== 'string') return;
+        const lowerKey = key.toLowerCase();
+        
+        if (
+            lowerKey.includes('responsible') || 
+            lowerKey.includes('responsavel') || 
+            lowerKey.includes('operator') || 
+            lowerKey.includes('employee') || 
+            lowerKey.includes('user') ||
+            lowerKey.includes('funcionario')
+        ) {
+            addAutocompleteSuggestion('responsibles', value);
+        } else if (lowerKey.includes('visitor') || lowerKey.includes('visitante') || lowerKey.includes('visita')) {
+            addAutocompleteSuggestion('visitors', value);
+        } else if (
+            lowerKey.includes('company') || 
+            lowerKey.includes('empresa') || 
+            lowerKey.includes('supplier') || 
+            lowerKey.includes('fornecedor') ||
+            lowerKey.includes('cliente') ||
+            lowerKey.includes('destino') ||
+            lowerKey.includes('brand') ||
+            lowerKey.includes('marca')
+        ) {
+            addAutocompleteSuggestion('companies', value);
+        }
+    });
 };
 

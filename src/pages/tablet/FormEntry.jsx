@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { getSessionWithRecords, addRecord, editRecord, getUsers, getLabels } from '../../services/db';
+import { getSessionWithRecords, addRecord, editRecord, getUsers, getLabels, getAutocompleteSuggestions } from '../../services/db';
 import { Lock, Save, X, Edit2, ArrowLeft, User, Calendar, Clock, Camera, Upload, Check } from 'lucide-react';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
@@ -21,6 +21,17 @@ export const FormEntry = () => {
     const [refreshKey, setRefreshKey] = useState(0);
     const [activeSelectorField, setActiveSelectorField] = useState(null);
 
+    // Estados de autocomplete
+    const [responsibles, setResponsibles] = useState([]);
+    const [visitors, setVisitors] = useState([]);
+    const [companies, setCompanies] = useState([]);
+
+    const loadAutocompletes = () => {
+        setResponsibles(getAutocompleteSuggestions('responsibles'));
+        setVisitors(getAutocompleteSuggestions('visitors'));
+        setCompanies(getAutocompleteSuggestions('companies'));
+    };
+
     const loadData = async () => {
         setLoading(true);
         try {
@@ -37,6 +48,7 @@ export const FormEntry = () => {
             setSession(sessionVal);
             setUsers(usersVal);
             setAvailableLabels(labelsVal);
+            loadAutocompletes();
         } catch (error) {
             console.error("Error loading form entry data:", error);
         } finally {
@@ -150,6 +162,7 @@ export const FormEntry = () => {
 
         const value = inputValue[field.name] ?? '';
         const commonStyle = { width: '100%', padding: '10px', borderRadius: 6, border: '1px solid #ccc' };
+        const listId = getDatalistId(field.name);
 
         return (
             <div key={field.name} style={{ flex: '1 1 250px', minWidth: 250, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -177,6 +190,7 @@ export const FormEntry = () => {
                         value={value}
                         onChange={(e) => handleFieldChange(field.name, e.target.value)}
                         placeholder={field.type === 'date' ? 'dd/mm/aaaa' : field.type === 'time' ? 'HH:MM' : ''}
+                        list={listId || undefined}
                     />
                 )}
             </div>
@@ -418,8 +432,50 @@ export const FormEntry = () => {
                 </div>
               </div>
             )}
+
+            {/* Datalists de sugestões de autocomplete */}
+            <datalist id="list-responsibles">
+                {responsibles.map(name => <option key={name} value={name} />)}
+            </datalist>
+            <datalist id="list-visitors">
+                {visitors.map(name => <option key={name} value={name} />)}
+            </datalist>
+            <datalist id="list-companies">
+                {companies.map(name => <option key={name} value={name} />)}
+            </datalist>
         </div>
     );
+};
+
+const getDatalistId = (colKey) => {
+    if (!colKey) return null;
+    const key = colKey.toLowerCase();
+    if (
+        key.includes('responsible') || 
+        key.includes('responsavel') || 
+        key.includes('operator') || 
+        key.includes('employee') || 
+        key.includes('user') ||
+        key.includes('funcionario')
+    ) {
+        return 'list-responsibles';
+    }
+    if (key.includes('visitor') || key.includes('visitante') || key.includes('visita')) {
+        return 'list-visitors';
+    }
+    if (
+        key.includes('company') || 
+        key.includes('empresa') || 
+        key.includes('supplier') || 
+        key.includes('fornecedor') ||
+        key.includes('cliente') ||
+        key.includes('destino') ||
+        key.includes('brand') ||
+        key.includes('marca')
+    ) {
+        return 'list-companies';
+    }
+    return null;
 };
 
 export default FormEntry;
