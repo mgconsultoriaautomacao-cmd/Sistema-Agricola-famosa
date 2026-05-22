@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getSessionWithRecords, addRecord } from '../../services/db';
 import { useAuth } from '../../contexts/AuthContext';
-import { ChevronLeft, Save, CheckCircle, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, Save, CheckCircle, AlertTriangle, ArrowDown } from 'lucide-react';
 import { format } from 'date-fns';
 
 export const GridInspection = () => {
@@ -55,6 +55,39 @@ export const GridInspection = () => {
         });
     };
 
+    const handleFillDown = (columnKey) => {
+        if (!form || !form.items || form.items.length === 0) return;
+        
+        const firstItemId = form.items[0].id;
+        const isFirstSelected = !!gridData[firstItemId]?.[columnKey];
+        
+        setGridData(prev => {
+            const updated = { ...prev };
+            
+            form.items.forEach(item => {
+                const currentItemState = { ...(updated[item.id] || {}) };
+                
+                if (isFirstSelected) {
+                    // Se o primeiro item está selecionado para a coluna target,
+                    // definimos essa coluna como true e todas as outras colunas como false para todos os itens (exclusividade mútua)
+                    Object.keys(currentItemState).forEach(key => {
+                        currentItemState[key] = false;
+                    });
+                    currentItemState[columnKey] = true;
+                } else {
+                    // Se o primeiro item NÃO está selecionado para a coluna target,
+                    // apenas definimos essa coluna específica como false para todos os itens,
+                    // mantendo as outras colunas intactas.
+                    currentItemState[columnKey] = false;
+                }
+                
+                updated[item.id] = currentItemState;
+            });
+            
+            return updated;
+        });
+    };
+
     const handleSave = async (shouldSign = false) => {
         try {
             await addRecord(user.id, sessionId, { grid: gridData });
@@ -97,8 +130,43 @@ export const GridInspection = () => {
                         <tr style={{ backgroundColor: 'rgba(0,0,0,0.05)' }}>
                             <th style={{ padding: '16px', textAlign: 'left', borderBottom: '2px solid var(--color-primary-light)' }}>Equipamento / Local</th>
                             {form.columns.map(col => (
-                                <th key={col.key} style={{ padding: '16px', textAlign: 'center', borderBottom: '2px solid var(--color-primary-light)' }}>
-                                    {col.label}
+                                <th key={col.key} style={{ padding: '16px', borderBottom: '2px solid var(--color-primary-light)', minWidth: '120px' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                                        <span style={{ fontSize: '0.9rem', fontWeight: '600' }}>{col.label}</span>
+                                        <button 
+                                            type="button"
+                                            className="btn-secondary" 
+                                            title={`Replicar "${col.label}" para todas as linhas`}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleFillDown(col.key);
+                                            }}
+                                            style={{ 
+                                                padding: '4px 8px', 
+                                                fontSize: '0.75rem', 
+                                                display: 'inline-flex', 
+                                                alignItems: 'center', 
+                                                gap: '4px',
+                                                borderRadius: '6px',
+                                                border: '1px solid rgba(255, 255, 255, 0.15)',
+                                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                                color: 'var(--color-primary-light)',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s',
+                                                userSelect: 'none'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                                                e.currentTarget.style.transform = 'translateY(1px)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                                                e.currentTarget.style.transform = 'none';
+                                            }}
+                                        >
+                                            <ArrowDown size={12} /> Copiar
+                                        </button>
+                                    </div>
                                 </th>
                             ))}
                         </tr>
